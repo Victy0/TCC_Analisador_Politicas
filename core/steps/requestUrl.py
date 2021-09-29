@@ -3,9 +3,9 @@ from urllib.request import Request, urlopen
 from goose3 import Goose
 from rest_framework.response import Response
 
-def helloFriend ():
+def textExtractor (request):
     g = Goose()
-    article = g.extract(url='https://www.paodeacucar.com/user/register')
+    article = g.extract(url=request)
     g.close()
     if article.cleaned_text == "":
         soup = BeautifulSoup(article.raw_html, 'html.parser')
