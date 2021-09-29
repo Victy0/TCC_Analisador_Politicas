@@ -11,4 +11,4 @@ from core.steps import summarizer
 def read_news(request):
     if request.method == 'GET':
         text = hello.helloFriend()
-        return Response(summarizer.sumarizationText(text))
+        return Response(summarizer.summarizerText(text))
