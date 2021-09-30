@@ -4,5 +4,5 @@ from core import views
 app_name = 'core'
 
 urlpatterns = [
-    path('', views.read_news, name="detail"),
+    path('', views.request_url, name="detail"),
 ]
