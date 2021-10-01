@@ -6,6 +6,7 @@ from rest_framework.response import Response
 
 from pdfminer import high_level
 import requests
+from datetime import datetime
 #
 #  Extrai texto de arquivos 
 #
@@ -15,8 +16,8 @@ def textExtractor (request):
     #Verifica o tipo de arquivo que está sendo provido pela url e decide qual metodo usar 
     if exten == '.pdf':
         r= requests.get(request,allow_redirects=True)
-       # cria um arquivo de pdf
-        completeName= os.path.join('files','Analised.pdf')
+        fileId = datetime.now().strftime("%S.%f")
+        completeName= os.path.join('files', fileId+'.pdf')
         open(completeName,'wb').write(r.content)
          
         extracted_text ="\n"
@@ -29,6 +30,8 @@ def textExtractor (request):
             # Concatena o resultado  anterior com o texto extraido da pagina atual
             resultText= resultText + extracted_text
             counter= counter+1
+        
+        removeFile(completeName)  
         return resultText
      
     else :
@@ -43,5 +46,6 @@ def textExtractor (request):
         else:
             return article.cleaned_text
 
-
+def removeFile(file):
+    os.remove(file)      
     
