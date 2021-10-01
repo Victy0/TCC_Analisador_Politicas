@@ -145,4 +145,4 @@ db.sqlite3
 media
 
 # files
-files/
+*.pdf
