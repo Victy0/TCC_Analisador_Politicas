@@ -1,3 +1,4 @@
+import os
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
 from goose3 import Goose
@@ -5,34 +6,37 @@ from rest_framework.response import Response
 
 from pdfminer import high_level
 import requests
-
+#
+#  Extrai texto de arquivos 
+#
 def textExtractor (request):
+    # Obtem os 4 ultimos caracteres do url
     exten = request[-4:]
-    print(exten)
-
+    #Verifica o tipo de arquivo que está sendo provido pela url e decide qual metodo usar 
     if exten == '.pdf':
         r= requests.get(request,allow_redirects=True)
-
-        open('Analised.pdf','wb').write(r.content)
-     
-        local_pdf_filename = "Analised.pdf"
-       
+       # cria um arquivo de pdf
+        completeName= os.path.join('files','Analised.pdf')
+        open(completeName,'wb').write(r.content)
+         
         extracted_text ="\n"
         
         resultText = ""
         counter= 0
         while extracted_text != "":  
-            extracted_text = high_level.extract_text(local_pdf_filename, "", [counter],True,'utf-8')
-            resultText.join(extracted_text)
-            
+            # high_level.extract_text extrai o texto de uma pagina do arquivo pdf
+            extracted_text = high_level.extract_text(completeName, "", [counter],True,'utf-8')
+            # Concatena o resultado  anterior com o texto extraido da pagina atual
+            resultText= resultText + extracted_text
             counter= counter+1
-            print(counter)
         return resultText
      
     else :
         g = Goose()
+        # Extrai o texto de uma url
         article = g.extract(url=request)
         g.close()
+        # Se não der certo a extração pelo goose utilizamos a opção  raw_html do goose e extraimos pelo beautiful soup
         if article.cleaned_text == "":
             soup = BeautifulSoup(article.raw_html, 'html.parser')
             return soup.get_text()
