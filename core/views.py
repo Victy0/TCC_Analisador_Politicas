@@ -9,4 +9,5 @@ from core.steps import requestUrl
 @api_view(['POST', ])
 def request_url(request):
     if request.method == 'POST':
-        return Response(requestUrl.textExtractor(request.data['url']))
+        requestUrl.textExtractor(request.data['url'])
+        return Response()

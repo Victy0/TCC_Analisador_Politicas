@@ -5,4 +5,5 @@ app_name = 'core'
 
 urlpatterns = [
     path('', views.request_url, name="detail"),
+    
 ]
