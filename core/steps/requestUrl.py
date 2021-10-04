@@ -29,8 +29,7 @@ def textExtractor (request, fileId):
             # Concatena o resultado  anterior com o texto extraido da pagina atual
             resultText= resultText + extracted_text
             counter= counter+1
-        
-        removeFile(completeName)  
+            removeFile(completeName)  
         return resultText
      
     else :
@@ -46,5 +45,6 @@ def textExtractor (request, fileId):
             return article.cleaned_text
 
 def removeFile(file):
+ if os.path.isfile(file):
     os.remove(file)      
     
