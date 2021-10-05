@@ -22,7 +22,7 @@ except LookupError:
 #
 #  resumo básico de texto 
 #
-def basicSummarizerText(raw_text):
+def basic_summarizer_text(raw_text):
     parser = PlaintextParser.from_string(raw_text, Tokenizer('portuguese'))
     summarizer = LuhnSummarizer()
     # número de sentenças fixado em 5
@@ -41,7 +41,7 @@ def tokenizer(string):
 #
 # resumo de texto validanco frequência de palavras
 # 
-def summarizerText(raw_text):
+def summarizer_text(raw_text):
     # iniciação de um novo defaultdict pra ranking, aonde cada chave nova gerada irá receber o valor 0, caso a chave não exista
     ranking = defaultdict(int)
 
