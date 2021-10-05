@@ -37,7 +37,10 @@ def request_url(request):
             cancel_policy_under_analysis(policy_under_analysis.id)
             return Response("")
 
-        return Response(summarizer.summarizerText(text))
+        # etapa de sumarização do texto bruto
+        text = summarizer.summarizer_text(text)
+
+        return Response(text)
 
 #
 # método para cancelar política de privacidade em análise em processamento
