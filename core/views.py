@@ -49,7 +49,7 @@ def cancel_policy_under_analysis(review_id):
     # verifica se o id informado existe
     if(policy_index != -1):
         # caso sim, remove o arquivo criado e da lista de políticas em análise
-        requestUrl.removeFile(review_id)
+        requestUrl.removeFile(review_id + '.pdf')
         policies_under_analysis_review.pop(policy_index)
 
 
