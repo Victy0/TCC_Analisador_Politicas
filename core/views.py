@@ -14,7 +14,7 @@ policies_under_analysis_review = []
 # método POST para análise de política de privacidade
 # 
 @api_view(['POST', ])
-def request_url(request):
+def start_analysis(request):
     if request.method == 'POST':
 
         # criação da esturutura e id da política de privacidade solicitada para análise
@@ -55,4 +55,20 @@ def cancel_policy_under_analysis(review_id):
         requestUrl.removeFile(review_id + '.pdf')
         policies_under_analysis_review.pop(policy_index)
 
+# 
+# método POST para análise de política de privacidade
+# 
+@api_view(['POST', ])
+def cancel_analysis(request):
+    if request.method == 'POST':
 
+        # recupera index pelo id informado
+        policy_index = next((p for p in policies_under_analysis_review if p.id == request.data['id']), -1)
+
+        # verifica se o id informado existe
+        if(policy_index != -1):
+            # caso sim, seta como cancelado na lista de políticas de privacidade em análise
+            policies_under_analysis_review[policy_index].cancel = True
+
+        # TODO verificar o retorno
+        return Response(True)
