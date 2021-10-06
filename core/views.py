@@ -6,7 +6,7 @@ from rest_framework.decorators import api_view
 from core.models import AnalyticalReview
 from core.steps import requestUrl
 from core.steps import summarizer
-
+from core.steps import  estructurer
 # lista de políticas de privacidade em análise
 policies_under_analysis_review = []
 
@@ -39,7 +39,8 @@ def request_url(request):
 
         # etapa de sumarização do texto bruto
         text = summarizer.summarizer_text(text)
-
+        
+        text = estructurer.Sinalize(text)
         return Response(text)
 
 #
