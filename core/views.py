@@ -30,7 +30,7 @@ def request_url(request):
             return Response("")
 
         # etapa de extração de texto bruto do PDF ou HTML
-        text = requestUrl.textExtractor(request.data['url'], policies_under_analysis_review.id)
+        text = requestUrl.textExtractor(request.data['url'], policy_under_analysis.id)
 
         # verifica se análise foi cancelada antes da próxima etapa 
         if(policy_under_analysis.cancel):
