@@ -19,6 +19,8 @@ try:
 except LookupError:
     nltk.download("punkt")
 
+key_words=['cpf',"email","e-mail","telefone", "telefone","celular","sexo","endereço","cnpj","nome","cidade", "estado","nascimento"]  
+
 #
 #  resumo básico de texto 
 #
@@ -73,10 +75,12 @@ def summarizer_text(raw_text):
     ranking[0] = 10000000000
 
     for i, sentence in enumerate(sentence_list):
-        for w in tokenizer(sentence.lower()):
+        for w in [t for t in tokenizer(sentence.lower()) if t not in stop_words]:
             if w in freq:
                 ranking[i] += freq[w]
-
+                if w in key_words:
+                    ranking[i]+= 1000
+                    
     # número de sentenças que geraram o sumário: fixado até 5 (possivelmente será alterado)
     if len(sentence_list) < 5:
         num_max_sentence = len(sentence_list)
