@@ -73,7 +73,7 @@ def summarizer_text(raw_text):
     ranking[0] = 10000000000
 
     for i, sentence in enumerate(sentence_list):
-        for w in tokenizer(sentence.lower()):
+        for w in [t for t in tokenizer(sentence.lower()) if t not in stop_words]:
             if w in freq:
                 ranking[i] += freq[w]
 
