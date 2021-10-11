@@ -7,9 +7,14 @@ from rest_framework import status
 from core.models import AnalyticalReview
 from core.steps import requestUrl
 from core.steps import summarizer
+from core.steps import  estructurer
+
+
 
 # lista de políticas de privacidade em análise
 policies_under_analysis_review = []
+
+
 
 # 
 # método POST para análise de política de privacidade
@@ -42,12 +47,16 @@ def start_analysis(request):
 
             # etapa de sumarização do texto bruto
             text = summarizer.summarizer_text(text)
-
+        
+            text = estructurer.Sinalize(text)
             return Response(text)
-    else:
-        data={}
-        data["error"]="Falta do parametro url no corpo da requisição"
-        return Response(data=data,status=status.HTTP_400_BAD_REQUEST)
+        else:
+            data={}
+            data["error"]="Falta do parametro url no corpo da requisição"
+            return Response(data=data,status=status.HTTP_400_BAD_REQUEST)
+
+
+
 #
 # método para cancelar política de privacidade em análise em processamento
 #
@@ -60,6 +69,9 @@ def cancel_policy_under_analysis(review_id):
         # caso sim, remove o arquivo criado e da lista de políticas em análise
         requestUrl.removeFile(review_id + '.pdf')
         policies_under_analysis_review.pop(policy_index)
+
+
+
 
 # 
 # método POST para análise de política de privacidade
