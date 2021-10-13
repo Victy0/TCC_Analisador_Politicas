@@ -38,8 +38,23 @@ def textExtractor (request, fileId):
         article = g.extract(url=request)
         g.close()
         # Se não der certo a extração pelo goose utilizamos a opção  raw_html do goose e extraimos pelo beautiful soup
+        
         if article.cleaned_text == "":
             soup = BeautifulSoup(article.raw_html, 'html.parser')
+            if soup.find("footer"):
+                soup.footer.extract()
+            if soup.find("header"):
+                soup.footer.extract()    
+            if soup.find("style"):
+                soup.style.extract()
+            if soup.find("head"):
+                soup.head.extract()    
+            if soup.find("script"):
+                soup.script.extract()
+            if soup.find("section"):
+                soup.section.extract()
+            if soup.find("nav"): 
+                soup.nav.extract()
             return soup.get_text()
         else:
             return article.cleaned_text
