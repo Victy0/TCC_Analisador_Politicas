@@ -39,7 +39,11 @@ def start_analysis(request):
 
             # etapa de extração de texto bruto do PDF ou HTML
             text = requestUrl.textExtractor(request.data['url'], policy_under_analysis.id)
-
+            
+            if text == "Documento não é uma politica de privacidade":
+                data={}
+                data["error"]=text
+                return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
             # verifica se análise foi cancelada antes da próxima etapa 
             if(policy_under_analysis.cancel):
                 cancel_policy_under_analysis(policy_under_analysis.id)
@@ -50,10 +54,10 @@ def start_analysis(request):
         
             text = estructurer.Sinalize(text)
             return Response(text)
-        else:
-            data={}
-            data["error"]="Falta do parametro url no corpo da requisição"
-            return Response(data=data,status=status.HTTP_400_BAD_REQUEST)
+    else:
+        data={}
+        data["error"]="Falta do parametro url no corpo da requisição"
+        return Response(data=data,status=status.HTTP_400_BAD_REQUEST)
 
 
 
