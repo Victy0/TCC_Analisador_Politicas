@@ -1,6 +1,10 @@
 import os
 import socketio
 
+from datetime import datetime
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
 async_mode = None
 basedir = os.path.dirname(os.path.realpath(__file__))
 
@@ -36,6 +40,8 @@ def background_thread():
 #
 @sio.event
 def connect(sid, environ):
+
+    # inclusão do id na lista de sockets
     sockets_connected.append(sid)
     print("Socket conectado: " + sid)
     
@@ -44,10 +50,31 @@ def connect(sid, environ):
     sio.emit('connect', {'id': sid}, room = sid)
 
 #
+# método para conectar manualmente (socket falso) para sistemas que não possuem portabilidade para socket
+#
+@api_view(['POST', ])
+def connect_manual(request):
+    if request.method == 'POST':
+
+        # criação do id
+        sid = datetime.now().strftime("%S.%f")
+
+        # inclusão do id na lista de sockets
+        sockets_connected.append(sid)
+        print("Socket manual conectado: " + sid)
+
+        # retorno de resposta
+        data={}
+        data["id"] = sid
+        return Response(data)
+
+#
 # método para desconectar
 #
 @sio.event
 def disconnect(sid):
+
+    #remoção do id da lista de sockets
     sockets_connected.remove(sid)
     print('Socket desconectado: ' + sid)
 
@@ -56,6 +83,8 @@ def disconnect(sid):
 #
 @sio.event
 def message_event(sid, message):
+
+    #envio de mensagem pelo socket 
     sio.emit('mensagem', {'data': message}, room = sid)
 
 #
@@ -63,7 +92,11 @@ def message_event(sid, message):
 #
 @sio.event
 def broadcast_message_event(sid, message):
+
+    #envio de mensagem para todos os sockets
     sio.emit('nome_do_evento', {'data': message})
+
+#################################################### daqui para baixo provavel que não será usado na primeira versão ####################################################
 
 #
 # método para entrar numa sala (talvez não será usada)

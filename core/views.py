@@ -1,5 +1,4 @@
 from django.shortcuts import render
-from datetime import datetime
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
@@ -10,6 +9,7 @@ from core.steps import summarizer
 from core.steps import  estructurer
 
 from socketServer.views import sockets_connected
+from socketServer.views import disconnect
 
 
 # lista de políticas de privacidade em análise
@@ -51,6 +51,7 @@ def start_analysis(request):
                 data={}
                 data["error"]=text
                 return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+            
             # verifica se análise foi cancelada antes da próxima etapa 
             if(policy_under_analysis.cancel):
                 cancel_policy_under_analysis(policy_under_analysis.id)
@@ -60,6 +61,10 @@ def start_analysis(request):
             text = summarizer.summarizer_text(text)
         
             text = estructurer.Sinalize(text)
+
+            # disconectar socket
+            disconnect(policy_under_analysis.id)
+
             return Response(text)
     else:
         data={}
@@ -84,7 +89,8 @@ def cancel_policy_under_analysis(review_id):
     if(policy_index != -1):
         # caso sim, remove o arquivo criado e da lista de políticas em análise
         requestUrl.removeFile(review_id + '.pdf')
-        policies_under_analysis_review.pop(policy_index)
+        policies_under_analysis_review.remove(policy_index)
+        disconnect(review_id)
 
 
 
