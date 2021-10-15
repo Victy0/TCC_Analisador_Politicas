@@ -30,9 +30,8 @@ def textExtractor (request, fileId):
             resultText= resultText + extracted_text
             counter= counter+1
         removeFile(completeName)
-        resultText=resultText.lower()
         
-        if resultText.find("política de privacidade")!=-1:
+        if resultText.lower().find("política de privacidade")!=-1:
            
             return resultText
         else:
@@ -70,8 +69,8 @@ def textExtractor (request, fileId):
                 data="Documento não é uma politica de privacidade"
                 return data  
         else:
-            article.cleaned_text=article._cleaned_text.lower()
-            if article._cleaned_text.find("política de privacidade") !=-1:
+            
+            if article._cleaned_text.lower().find("política de privacidade") !=-1:
                 return article.cleaned_text
             else:
                 data="Documento não é uma politica de privacidade"
