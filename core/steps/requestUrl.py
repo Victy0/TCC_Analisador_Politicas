@@ -46,32 +46,35 @@ def textExtractor (request, fileId):
         g.close()
         # Se não der certo a extração pelo goose utilizamos a opção  raw_html do goose e extraimos pelo beautiful soup
         
-        if article.cleaned_text == "":
+        if article.cleaned_text == "" or len(article.cleaned_text)< 500 :
             soup = BeautifulSoup(article.raw_html, 'html.parser')
-            if soup.title.contents[0] == "Política de Privacidade":
-                if soup.find("footer")!=-1:
+            if  "Privacidade" in soup.title.contents[0]:
+                if soup.find("footer")!= None and soup.find("footer")!=-1:
                     soup.footer.extract()
-                if soup.find("header")!=-1:
+                if soup.find("header")!= None and soup.find("header")!=-1:
                     soup.header.extract()    
-                if soup.find("style")!=-1:
+                if soup.find("style")!= None  and  soup.find("style")!= -1 :
                     soup.style.extract()
-                if soup.find("head")!=-1:
+                if soup.find("head")!= None and  soup.find("head")!= -1:
                     soup.head.extract()    
-                if soup.find("script")!=-1:
+                if soup.find("script")!= None and soup.find("script")!=-1:
                     soup.script.extract()
-                if soup.find("section")!=-1:
+                if soup.find("section")!= None and soup.find("section")!=-1:
                     soup.section.extract()
-                if soup.find("nav")!=-1: 
+                if soup.find("nav")!= None  and soup.find("nav")!=-1: 
                     soup.nav.extract()
                 text=soup.get_text()
                 return text
             else:
+                print("soup")
                 data="Documento não é uma politica de privacidade"
                 return data  
         else:
             if article._cleaned_text.find("Política de Privacidade") !=-1:
                 return article.cleaned_text
             else:
+                print(article.cleaned_text)
+                print("goose")
                 data="Documento não é uma politica de privacidade"
                 return data 
 
