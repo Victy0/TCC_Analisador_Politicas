@@ -30,8 +30,9 @@ def textExtractor (request, fileId):
             resultText= resultText + extracted_text
             counter= counter+1
         removeFile(completeName)
+        resultText=resultText.lower()
         
-        if resultText.find("Política de Privacidade")!=-1:
+        if resultText.find("política de privacidade")!=-1:
            
             return resultText
         else:
@@ -66,15 +67,13 @@ def textExtractor (request, fileId):
                 text=soup.get_text()
                 return text
             else:
-                print("soup")
                 data="Documento não é uma politica de privacidade"
                 return data  
         else:
-            if article._cleaned_text.find("Política de Privacidade") !=-1:
+            article.cleaned_text=article._cleaned_text.lower()
+            if article._cleaned_text.find("política de privacidade") !=-1:
                 return article.cleaned_text
             else:
-                print(article.cleaned_text)
-                print("goose")
                 data="Documento não é uma politica de privacidade"
                 return data 
 
