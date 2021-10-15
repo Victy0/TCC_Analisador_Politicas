@@ -1,7 +1,9 @@
 import os
 import socketio
+import string
+import random
+import time
 
-from datetime import datetime
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
@@ -57,7 +59,7 @@ def connect_manual(request):
     if request.method == 'POST':
 
         # criação do id
-        sid = datetime.now().strftime("%S.%f")
+        sid = random.choice(string.ascii_letters) + str(round(time.time() * 1000)) + random.choice(string.ascii_letters)
 
         # inclusão do id na lista de sockets
         sockets_connected.append(sid)
