@@ -48,22 +48,23 @@ def textExtractor (request, fileId):
         
         if article.cleaned_text == "" or len(article.cleaned_text)< 500 :
             soup = BeautifulSoup(article.raw_html, 'html.parser')
-            if  "Privacidade" in soup.title.contents[0]:
-                if soup.find("footer")!= None and soup.find("footer")!=-1:
-                    soup.footer.extract()
-                if soup.find("header")!= None and soup.find("header")!=-1:
-                    soup.header.extract()    
-                if soup.find("style")!= None  and  soup.find("style")!= -1 :
-                    soup.style.extract()
-                if soup.find("head")!= None and  soup.find("head")!= -1:
-                    soup.head.extract()    
-                if soup.find("script")!= None and soup.find("script")!=-1:
-                    soup.script.extract()
-                if soup.find("section")!= None and soup.find("section")!=-1:
-                    soup.section.extract()
-                if soup.find("nav")!= None  and soup.find("nav")!=-1: 
-                    soup.nav.extract()
-                text=soup.get_text()
+           
+            if soup.find("footer")!= None and soup.find("footer")!=-1:
+                soup.footer.extract()
+            if soup.find("header")!= None and soup.find("header")!=-1:
+                soup.header.extract()    
+            if soup.find("style")!= None  and  soup.find("style")!= -1 :
+                soup.style.extract()
+            if soup.find("head")!= None and  soup.find("head")!= -1:
+                soup.head.extract()    
+            if soup.find("script")!= None and soup.find("script")!=-1:
+                soup.script.extract()
+            if soup.find("section")!= None and soup.find("section")!=-1:
+                soup.section.extract()
+            if soup.find("nav")!= None  and soup.find("nav")!=-1: 
+                soup.nav.extract()
+            text=soup.get_text()
+            if soup.get_text().lower.find("política de privacidade")!= -1:
                 return text
             else:
                 data="Documento não é uma politica de privacidade"
