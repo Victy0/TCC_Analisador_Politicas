@@ -81,7 +81,6 @@ terms=[
     "evitar",
     "cumprir",
     "cumprimento",
-    "pesquisa",
     "aperfeiçoar",
     "aperfeiçoamento",
     "refutar",
@@ -104,6 +103,6 @@ punctuation = punctuation.replace('"', "").replace("'", "")
 
 terms.extend(list(punctuation))
 
-finalidade_words = set(terms)
+finality_words = set(terms)
 
 del terms
