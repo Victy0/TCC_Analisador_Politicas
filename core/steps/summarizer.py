@@ -12,6 +12,8 @@ import nltk
 from core.steps.auxiliary_token.bad_token import stop_words
 from core.steps.auxiliary_token.finality_token import finality_words
 
+
+
 #
 #  realizar download de tokenizer do nltk caso não esteja instalado na primeira vez em que executar o script desse arquivo
 #
@@ -22,6 +24,8 @@ except LookupError:
 
 key_words=['cpf',"email","e-mail","telefone", "telefone","celular","sexo","endereço","cnpj","nome","cidade", "estado","nascimento"]  
 
+
+
 #
 #  criação básica de tokenizer ajustável usando módulo 're' 
 #
@@ -29,6 +33,8 @@ def tokenizer(string):
     pattern = r"""\w+\S+\w+|\w+|\d+\.?,?\d+%|[0-9]{1,2}h?:?[0-9]{2}|[#$&\*'"]+"""
 
     return re.findall(pattern, string)
+
+
 
 #
 # resumo de texto validando frequência de palavras
