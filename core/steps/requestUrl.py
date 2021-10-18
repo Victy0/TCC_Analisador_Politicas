@@ -10,7 +10,7 @@ import requests
 #
 #  Extrai texto de arquivos 
 #
-def text_extractor (request, fileId):
+def text_extractor(request, fileId):
     # Obtem os 4 últimos caracteres do url
     exten = request[-4:]
 
