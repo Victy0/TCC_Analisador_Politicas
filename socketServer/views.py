@@ -7,6 +7,8 @@ import time
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+
+
 async_mode = None
 basedir = os.path.dirname(os.path.realpath(__file__))
 
@@ -17,6 +19,8 @@ thread = None
 # lista de sockets
 sockets_connected = []
 
+
+
 #
 # método de localização de threads (talvez será excluído)
 #
@@ -25,6 +29,8 @@ def index(request):
     if thread is None:
         thread = sio.start_background_task(background_thread)
     return ""
+
+
 
 #
 # thread em background (talvez será excluído)
@@ -36,6 +42,8 @@ def background_thread():
         sio.sleep(10)
         count += 1
         sio.emit('nome_do_evento', {'data': 'Server generated event'}, namespace='/test')
+
+
 
 #
 # método para conectar
@@ -50,6 +58,8 @@ def connect(sid, environ):
     # mensagem de conexão desnecessário, pois pode recuperar do id do próprio socket
     # deixando para caso seja necessário para outro sistema intregado posteriormente
     sio.emit('connect', {'id': sid}, room = sid)
+
+
 
 #
 # método para conectar manualmente (socket falso) para sistemas que não possuem portabilidade para socket
@@ -70,15 +80,19 @@ def connect_manual(request):
         data["id"] = sid
         return Response(data)
 
+
+
 #
-# método para desconectar
+# método para desconectar socket
 #
 @sio.event
 def disconnect(sid):
 
-    #remoção do id da lista de sockets
+    # remoção do id da lista de sockets
     sockets_connected.remove(sid)
     print('Socket desconectado: ' + sid)
+
+
 
 #
 # método de envio de mensagem
@@ -86,8 +100,10 @@ def disconnect(sid):
 @sio.event
 def message_event(sid, message):
 
-    #envio de mensagem pelo socket 
+    # envio de mensagem pelo socket 
     sio.emit('mensagem', {'data': message}, room = sid)
+
+
 
 #
 # método para envio de mensagem em broadcast
@@ -95,8 +111,8 @@ def message_event(sid, message):
 @sio.event
 def broadcast_message_event(sid, message):
 
-    #envio de mensagem para todos os sockets
-    sio.emit('nome_do_evento', {'data': message})
+    # envio de mensagem para todos os sockets
+    sio.emit('broadcast', {'data': message})
 
 #################################################### daqui para baixo provavel que não será usado na primeira versão ####################################################
 
