@@ -48,7 +48,8 @@ def textExtractor (request, fileId):
         
         if article.cleaned_text == "" or len(article.cleaned_text)< 500 :
             soup = BeautifulSoup(article.raw_html, 'html.parser')
-           
+            
+            # Verifica se no titulo contem a palavra "Poltica de privacidade"
             if soup.find("footer")!= None and soup.find("footer")!=-1:
                 soup.footer.extract()
             if soup.find("header")!= None and soup.find("header")!=-1:
@@ -70,7 +71,7 @@ def textExtractor (request, fileId):
                 data="Documento não é uma politica de privacidade"
                 return data  
         else:
-            
+            # Verifica se no texto contem a palavra "Poltica de privacidade"
             if article._cleaned_text.lower().find("política de privacidade") !=-1:
                 return article.cleaned_text
             else:
@@ -79,4 +80,4 @@ def textExtractor (request, fileId):
 
 def removeFile(file):
  if os.path.isfile(file):
-    os.remove(file)      
+    os.remove(file)

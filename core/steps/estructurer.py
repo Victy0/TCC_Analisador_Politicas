@@ -3,12 +3,15 @@ import re
 import json
 
 
-def Sinalize (request):
+def sinalize (request):
     payload ={
         'text':'',
         'flag':False
         }
-    subwords=['CPF',"EMAIL","E-MAIL","TELEFONE", "SENHA","CELULAR","SEXO","ENDEREÇO","EMAIL","CNPJ","NOME","FINALIDADE","DADOS","FINS"]
+    #
+    # Array de palavras a serem sinalizadas
+    #     
+    subwords=["cpf","email","e-mail","telefone", "senha","celular","sexo","endereço","cnpj","nome"]
     text=request
     for word in subwords:
         compiled = re.compile(re.escape(word), re.IGNORECASE)
@@ -16,18 +19,20 @@ def Sinalize (request):
     
     text=text.replace("\n","<br>") 
     payload['text']= text
-    
-    especificdata=['CPF',"EMAIL","E-MAIL","TELEFONE", "SENHA","CELULAR","SEXO","ENDEREÇO","EMAIL","CNPJ","NOME"] 
-    
+    #
+    # Array para verificação para texto generico
+    #
+    especific_data=["cpf","email","e-mail","telefone", "senha","celular","sexo","endereço","cnpj","nome"] 
+    #
+    # Pontos para verificação 
+    #
     points=0
-    for data in especificdata: 
+    for data in especific_data: 
         if re.findall(data,text):
             points= points+1
     if points==0:
         payload['flag']= True
     else:
         payload['flag']= False  
-    
-     
     
     return payload
