@@ -60,7 +60,7 @@ def start_analysis(request):
             # etapa de sumarização do texto bruto
             text = summarizer.summarizer_text(text)
         
-            text = estructurer.Sinalize(text)
+            text = estructurer.sinalize(text)
 
             # disconectar socket
             disconnect(policy_under_analysis.id)

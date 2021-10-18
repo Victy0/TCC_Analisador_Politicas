@@ -30,7 +30,9 @@ def textExtractor (request, fileId):
             resultText= resultText + extracted_text
             counter= counter+1
         removeFile(completeName)
-        
+        #
+        # Verifica se no texto contem a palavra "Poltica de privacidade"
+        # 
         if resultText.find("Política de Privacidade")!=-1:
            
             return resultText
@@ -48,6 +50,9 @@ def textExtractor (request, fileId):
         
         if article.cleaned_text == "":
             soup = BeautifulSoup(article.raw_html, 'html.parser')
+            #
+            # Verifica se no titulo contem a palavra "Poltica de privacidade"
+            # 
             if soup.title.contents[0] == "Política de Privacidade":
                 if soup.find("footer")!=-1:
                     soup.footer.extract()
@@ -69,6 +74,9 @@ def textExtractor (request, fileId):
                 data="Documento não é uma politica de privacidade"
                 return data  
         else:
+            #
+            # Verifica se no texto contem a palavra "Poltica de privacidade"
+            # 
             if article._cleaned_text.find("Política de Privacidade") !=-1:
                 return article.cleaned_text
             else:
