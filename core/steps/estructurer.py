@@ -6,7 +6,7 @@ import re
 def sinalize (request):
     payload ={
         'text':'',
-        'flag':False
+        'politica_generica':False
         }
     
     # Array de palavras a serem sinalizadas     
@@ -29,8 +29,8 @@ def sinalize (request):
             points = points + 1
             
     if points == 0:
-        payload['flag'] = True
+        payload['politica_generica'] = True
     else:
-        payload['flag'] = False  
+        payload['politica_generica'] = False  
     
     return payload

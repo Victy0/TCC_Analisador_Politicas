@@ -72,7 +72,6 @@ def text_extractor (request, fileId):
 
             if (soup.find("nav") != None) and (soup.find("nav") != -1): 
                 soup.nav.extract()
-
             text = soup.get_text()
             if soup.get_text().lower.find("política de privacidade") != -1:
                 return text
