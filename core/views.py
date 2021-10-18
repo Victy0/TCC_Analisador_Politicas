@@ -45,7 +45,7 @@ def start_analysis(request):
                 return Response("")
 
             # etapa de extração de texto bruto do PDF ou HTML
-            text = requestUrl.textExtractor(request.data['url'], policy_under_analysis.id)
+            text = requestUrl.text_extractor(request.data['url'], policy_under_analysis.id)
 
             # verificação se texto não é política de privacidade e retorno
             if text == "Documento não é uma politica de privacidade":
