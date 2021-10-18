@@ -30,10 +30,8 @@ def textExtractor (request, fileId):
             resultText= resultText + extracted_text
             counter= counter+1
         removeFile(completeName)
-        #
-        # Verifica se no texto contem a palavra "Poltica de privacidade"
-        # 
-        if resultText.find("Política de Privacidade")!=-1:
+        
+        if resultText.lower().find("política de privacidade")!=-1:
            
             return resultText
         else:
@@ -48,36 +46,33 @@ def textExtractor (request, fileId):
         g.close()
         # Se não der certo a extração pelo goose utilizamos a opção  raw_html do goose e extraimos pelo beautiful soup
         
-        if article.cleaned_text == "":
+        if article.cleaned_text == "" or len(article.cleaned_text)< 500 :
             soup = BeautifulSoup(article.raw_html, 'html.parser')
-            #
+            
             # Verifica se no titulo contem a palavra "Poltica de privacidade"
-            # 
-            if soup.title.contents[0] == "Política de Privacidade":
-                if soup.find("footer")!=-1:
-                    soup.footer.extract()
-                if soup.find("header")!=-1:
-                    soup.header.extract()    
-                if soup.find("style")!=-1:
-                    soup.style.extract()
-                if soup.find("head")!=-1:
-                    soup.head.extract()    
-                if soup.find("script")!=-1:
-                    soup.script.extract()
-                if soup.find("section")!=-1:
-                    soup.section.extract()
-                if soup.find("nav")!=-1: 
-                    soup.nav.extract()
-                text=soup.get_text()
+            if soup.find("footer")!= None and soup.find("footer")!=-1:
+                soup.footer.extract()
+            if soup.find("header")!= None and soup.find("header")!=-1:
+                soup.header.extract()    
+            if soup.find("style")!= None  and  soup.find("style")!= -1 :
+                soup.style.extract()
+            if soup.find("head")!= None and  soup.find("head")!= -1:
+                soup.head.extract()    
+            if soup.find("script")!= None and soup.find("script")!=-1:
+                soup.script.extract()
+            if soup.find("section")!= None and soup.find("section")!=-1:
+                soup.section.extract()
+            if soup.find("nav")!= None  and soup.find("nav")!=-1: 
+                soup.nav.extract()
+            text=soup.get_text()
+            if soup.get_text().lower.find("política de privacidade")!= -1:
                 return text
             else:
                 data="Documento não é uma politica de privacidade"
                 return data  
         else:
-            #
             # Verifica se no texto contem a palavra "Poltica de privacidade"
-            # 
-            if article._cleaned_text.find("Política de Privacidade") !=-1:
+            if article._cleaned_text.lower().find("política de privacidade") !=-1:
                 return article.cleaned_text
             else:
                 data="Documento não é uma politica de privacidade"
@@ -85,4 +80,4 @@ def textExtractor (request, fileId):
 
 def removeFile(file):
  if os.path.isfile(file):
-    os.remove(file)      
+    os.remove(file)
