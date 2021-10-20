@@ -123,13 +123,15 @@ def summarizer_text(raw_text):
     data["coleta"] = ""
 
     # junção das sentenças
-    data["finalidade"] = sumarized_text = "".join(
+    sumarized_text = "".join(
         [sentence_list[idx] for idx in sorted(sentence_idx_finality)]
     )
 
+    data["finalidade"] = summarizer_text_ranking(sumarized_text)
+
     # pode retornar diretamente o texto ou entar no sumarizar por ranking
     # sumarizador por ranking deixa mais objetivo
-    return summarizer_text_ranking(sumarized_text)
+    return data
 
 
 
