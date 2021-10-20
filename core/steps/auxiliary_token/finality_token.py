@@ -96,7 +96,8 @@ terms=[
     "consultar",
     "valorizar",
     "divulgação",
-
+    "oferecer",
+    "oferecemos",
 ]
 
 punctuation = punctuation.replace('"', "").replace("'", "")
