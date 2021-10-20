@@ -82,9 +82,9 @@ def summarizer_text_ranking(raw_text):
 #
 #   retorno de texto sumarizado em relação as sentenças que contêm as palavras de finalidade
 # 
-def summarizer_text(raw_text): 
+def summarizer_text(raw_text, raw_data): 
 
-    data = {}
+    data = raw_data
 
     # Preprocessamento do texto
     raw_text = (

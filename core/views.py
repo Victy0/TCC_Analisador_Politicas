@@ -28,6 +28,7 @@ def start_analysis(request):
 
             # instância da resposta do endpoint
             data = {}
+            policy_status= ""
 
             # verificação se id informado foi gerado pelo sistema
             if request.data['id'] not in sockets_connected:
@@ -47,20 +48,20 @@ def start_analysis(request):
                 return Response("")
 
             # etapa de extração de texto bruto do PDF ou HTML
-            text = requestUrl.text_extractor(request.data['url'], policy_under_analysis.id)
-
+            policy_status,text = requestUrl.text_extractor(request.data['url'], policy_under_analysis.id)
+            data['politica Generica'] = policy_status
             # verificação se texto não é política de privacidade e retorno
             if text == "Documento não é uma politica de privacidade":
                 data["error"] = text
                 return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
-
+            
             # verifica se análise foi cancelada antes da próxima etapa 
             if(policy_under_analysis.cancel):
                 cancel_policy_under_analysis(policy_under_analysis.id)
                 return Response("")
-
+            
             # etapa de sumarização do texto bruto
-            data = summarizer.summarizer_text(text)
+            data = summarizer.summarizer_text(text, data)
 
             # verifica se análise foi cancelada antes da próxima etapa 
             if(policy_under_analysis.cancel):
@@ -68,7 +69,7 @@ def start_analysis(request):
                 return Response("")
         
             # etapa de sinalização do texto sumarizado
-            data = estructurer.sinalize(data['finalidade'])
+            data = estructurer.sinalize(data)
 
             # disconectar socket
             disconnect(policy_under_analysis.id)

@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
 from goose3 import Goose
 from rest_framework.response import Response
-
+import re
 from pdfminer import high_level
 import requests
 
@@ -37,7 +37,8 @@ def text_extractor(request, fileId):
         removeFile(completeName)
         
         if resultText.lower().find("política de privacidade") != -1:
-            return resultText
+            is_generic=generic_verification(resultText)
+            return is_generic,resultText
         else:
             data = "Documento não é uma politica de privacidade" 
             return data        
@@ -74,14 +75,17 @@ def text_extractor(request, fileId):
                 soup.nav.extract()
             text = soup.get_text()
             if soup.get_text().lower.find("política de privacidade") != -1:
-                return text
+                
+                is_generic=generic_verification(text)
+                return is_generic, text
             else:
                 data = "Documento não é uma politica de privacidade"
                 return data  
         else:
             # Verifica se no texto contem a palavra "Política de privacidade"
             if article._cleaned_text.lower().find("política de privacidade") != -1:
-                return article.cleaned_text
+                is_generic=generic_verification(article.cleaned_text)
+                return is_generic,article.cleaned_text
             else:
                 data = "Documento não é uma politica de privacidade"
                 return data 
@@ -94,3 +98,17 @@ def text_extractor(request, fileId):
 def removeFile(file):
     if os.path.isfile(file):
         os.remove(file)
+
+def generic_verification(policy):
+    especific_data=["cpf","email","e-mail","telefone", "senha","celular","sexo","endereço","cnpj","nome"] 
+    
+    # Pontos para verificação 
+    points = 0
+    for data in especific_data: 
+        if re.findall(data,policy):
+            points = points + 1
+            
+    if points == 0 or len(policy) < 1000 :
+       return  True
+    else:
+      return False        
