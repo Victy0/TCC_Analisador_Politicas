@@ -26,9 +26,11 @@ def start_analysis(request):
     if "url" in request.data and "id" in request.data:
         if request.method == 'POST':
 
+            # instância da resposta do endpoint
+            data = {}
+
             # verificação se id informado foi gerado pelo sistema
             if request.data['id'] not in sockets_connected:
-                data = {}
                 data["error"] = "Identificação de solicitação informado não corresponde a uma identificação do sistema"
                 return Response(data=data)
 
@@ -49,7 +51,6 @@ def start_analysis(request):
 
             # verificação se texto não é política de privacidade e retorno
             if text == "Documento não é uma politica de privacidade":
-                data = {}
                 data["error"] = text
                 return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
 
@@ -59,7 +60,7 @@ def start_analysis(request):
                 return Response("")
 
             # etapa de sumarização do texto bruto
-            text = summarizer.summarizer_text(text)
+            data = summarizer.summarizer_text(text)
 
             # verifica se análise foi cancelada antes da próxima etapa 
             if(policy_under_analysis.cancel):
@@ -67,13 +68,13 @@ def start_analysis(request):
                 return Response("")
         
             # etapa de sinalização do texto sumarizado
-            text = estructurer.sinalize(text)
+            data = estructurer.sinalize(data['finalidade'])
 
             # disconectar socket
             disconnect(policy_under_analysis.id)
 
             # retorno de resposta
-            return Response(text)
+            return Response(data)
     else:
         #formatação de mensagem de erro
         message_complement = ("'id'" if ("id" not in request.data) else "") + ("'url'" if ("url" not in request.data) else "")

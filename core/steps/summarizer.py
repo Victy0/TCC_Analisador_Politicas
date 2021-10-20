@@ -84,6 +84,8 @@ def summarizer_text_ranking(raw_text):
 # 
 def summarizer_text(raw_text): 
 
+    data = {}
+
     # Preprocessamento do texto
     raw_text = (
         raw_text.replace("R$", " ")
@@ -118,8 +120,10 @@ def summarizer_text(raw_text):
     # remoção dos índices distantes
     sentence_idx_finality = list(set(sentence_idx_finality) - set(list_idx_of_ignore_distant_senteces(sentence_idx_finality))) 
 
+    data["coleta"] = ""
+
     # junção das sentenças
-    sumarized_text = "".join(
+    data["finalidade"] = sumarized_text = "".join(
         [sentence_list[idx] for idx in sorted(sentence_idx_finality)]
     )
 

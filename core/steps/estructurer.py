@@ -4,7 +4,7 @@ import re
 # método que sinaliza termos específicos no texto
 #
 def sinalize (request):
-    payload ={
+    payload = {
         'text':'',
         'politica_generica':False
         }
