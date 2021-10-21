@@ -35,7 +35,7 @@ def text_extractor(request, fileId):
             counter = counter + 1
 
         removeFile(completeName)
-        
+        # Verifica se no texto contem a palavra "Política de privacidade"
         if resultText.lower().find("política de privacidade") != -1:
             is_generic=generic_verification(resultText)
             return is_generic,resultText
@@ -74,6 +74,7 @@ def text_extractor(request, fileId):
             if (soup.find("nav") != None) and (soup.find("nav") != -1): 
                 soup.nav.extract()
             text = soup.get_text()
+            # Verifica se no texto contem a palavra "Política de privacidade"
             if soup.get_text().lower.find("política de privacidade") != -1:
                 
                 is_generic=generic_verification(text)
@@ -99,6 +100,9 @@ def removeFile(file):
     if os.path.isfile(file):
         os.remove(file)
 
+#
+# Função que verifica se a politica  de privacidade é generica pelo seu tamanho ou por conter um dos termos abaixo
+#
 def generic_verification(policy):
     especific_data=["cpf","email","e-mail","telefone", "senha","celular","sexo","endereço","cnpj","nome"] 
     
