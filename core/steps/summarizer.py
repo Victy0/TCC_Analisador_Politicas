@@ -7,6 +7,7 @@ import nltk
  
 from core.steps.auxiliary_token.bad_token import stop_words
 from core.steps.auxiliary_token.finality_token import finality_words
+from core.steps.auxiliary_token.collect_token import collect_words
 
 
 
@@ -34,11 +35,19 @@ def tokenizer(string):
 #
 # resumo de texto validando frequência de palavras
 # 
-def summarizer_text_ranking(raw_text):
+def summarizer_text_ranking(raw_text, is_finality):
     # iniciação de um novo defaultdict pra ranking, aonde cada chave nova gerada irá receber o valor 0, caso a chave não exista
     ranking = defaultdict(int)
 
     # pré-processamento do texto
+    raw_text = (
+        raw_text.replace("R$", " ")
+        .replace("$", " ")
+        .replace("\n", " ")
+        .replace("\t", " ")
+        .replace(".", ". ")
+        .strip()
+    )
     raw_text = unicodedata.normalize("NFKD", raw_text)
     raw_text = " ".join(raw_text.split())
 
@@ -62,11 +71,13 @@ def summarizer_text_ranking(raw_text):
                 if w in key_words:
                     ranking[i]+= 1000
                     
-    # número de sentenças que geraram o sumário: fixado até 10
-    if len(sentence_list) < 10:
+    # número de sentenças que geraram o sumário: fixado até 10 para finalidade e 5 para coleta
+    num_sentences = 10 if is_finality else 5
+
+    if len(sentence_list) < num_sentences:
         num_max_sentence = len(sentence_list)
     else:
-        num_max_sentence = 10
+        num_max_sentence = num_sentences
 
     # recuperação dos índices que obtiveram as maiores pontuações, obedecendo o número delimitador de sentenças recuperadas
     # string '\n' indica o fim de uma sentença
@@ -82,7 +93,9 @@ def summarizer_text_ranking(raw_text):
 #
 #   retorno de texto sumarizado em relação as sentenças que contêm as palavras de finalidade
 # 
-def summarizer_text(raw_text): 
+def summarizer_text(raw_text, raw_data): 
+
+    data = raw_data
 
     # Preprocessamento do texto
     raw_text = (
@@ -106,6 +119,9 @@ def summarizer_text(raw_text):
     sentence_idx_finality = []
     last_i_finality = -1
 
+    sentence_idx_collect = []
+    last_i_collect = -1
+
     # ranking de sentenças 
     for i, sentence in enumerate(sentence_list):
         for w in [t for t in tokenizer(sentence.lower()) if t not in stop_words]:
@@ -115,17 +131,28 @@ def summarizer_text(raw_text):
                 sentence_idx_finality.append(i)
                 last_i_finality = i
 
-    # remoção dos índices distantes
-    sentence_idx_finality = list(set(sentence_idx_finality) - set(list_idx_of_ignore_distant_senteces(sentence_idx_finality))) 
+            # indicação dos índices das sentenças que contêm sobre dados coletados
+            if (last_i_collect != i) and (i not in sentence_idx_collect) and (w in collect_words):
+                sentence_idx_collect.append(i)
+                last_i_collect = i
 
-    # junção das sentenças
-    sumarized_text = "".join(
+    # remoção dos índices distantes
+    sentence_idx_finality = list(set(sentence_idx_finality) - set(list_idx_of_ignore_distant_senteces(sentence_idx_finality)))
+    sentence_idx_collect = list(set(sentence_idx_collect) - set(list_idx_of_ignore_distant_senteces(sentence_idx_collect))) 
+
+    # junção das sentenças de finalidade   - pode retornar diretamente o texto ou entar no sumarizar por ranking, porém sumarizador por ranking deixa mais objetivo
+    sumarized_text_collect = "".join(
+        [sentence_list[idx] for idx in sorted(sentence_idx_collect)]
+    )
+    data["coleta"] = summarizer_text_ranking(sumarized_text_collect, False)
+
+    # junção das sentenças de finalidade
+    sumarized_text_finality = "".join(
         [sentence_list[idx] for idx in sorted(sentence_idx_finality)]
     )
-
-    # pode retornar diretamente o texto ou entar no sumarizar por ranking
-    # sumarizador por ranking deixa mais objetivo
-    return summarizer_text_ranking(sumarized_text)
+    data["finalidade"] = summarizer_text_ranking(sumarized_text_finality, True)
+    
+    return data
 
 
 
