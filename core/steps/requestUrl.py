@@ -37,11 +37,11 @@ def text_extractor(request, fileId):
         removeFile(completeName)
         # Verifica se no texto contem a palavra "Política de privacidade"
         if resultText.lower().find("política de privacidade") != -1:
-            is_generic=generic_verification(resultText)
+            is_generic = generic_verification(resultText)
             return is_generic,resultText
         else:
             data = "Documento não é uma politica de privacidade" 
-            return data        
+            return False, data        
     else :
         g = Goose()
         # Extrai o texto de uma url
@@ -75,13 +75,13 @@ def text_extractor(request, fileId):
                 soup.nav.extract()
             text = soup.get_text()
             # Verifica se no texto contem a palavra "Política de privacidade"
-            if soup.get_text().lower.find("política de privacidade") != -1:
+            if soup.get_text().lower().find("política de privacidade") != -1:
                 
                 is_generic=generic_verification(text)
                 return is_generic, text
             else:
                 data = "Documento não é uma politica de privacidade"
-                return data  
+                return False, data  
         else:
             # Verifica se no texto contem a palavra "Política de privacidade"
             if article._cleaned_text.lower().find("política de privacidade") != -1:
@@ -89,7 +89,7 @@ def text_extractor(request, fileId):
                 return is_generic,article.cleaned_text
             else:
                 data = "Documento não é uma politica de privacidade"
-                return data 
+                return False, data 
 
 
 
