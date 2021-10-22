@@ -112,7 +112,7 @@ def generic_verification(policy):
         if re.findall(data,policy):
             points = points + 1
             
-    if points == 0 or len(policy) < 1000 :
+    if points < 2 or len(policy) < 5000 :
        return  True
     else:
       return False        
