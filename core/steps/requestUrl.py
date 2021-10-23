@@ -106,12 +106,12 @@ def text_extractor(request, file_id):
         else:
             result_text = article.cleaned_text + table_str
 
-        # Verifica se no texto contem a palavra "Política de privacidade"
-        if result_text.lower().find("política de privacidade") != -1:
-            is_generic = generic_verification(result_text)
-            return is_generic, result_text
-        else: 
-            return False, "Sistema considerou o documento como não sendo uma política de privacidade" 
+    # Verifica se no texto contem a palavra "Política de privacidade"
+    if result_text.lower().find("política de privacidade") != -1:
+        is_generic = generic_verification(result_text)
+        return is_generic, result_text
+    else: 
+        return False, "Sistema considerou o documento como não sendo uma política de privacidade" 
 
 
 
