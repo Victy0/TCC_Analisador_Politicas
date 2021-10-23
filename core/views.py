@@ -32,7 +32,7 @@ def start_analysis(request):
 
             # verificação se id informado foi gerado pelo sistema
             if request.data['id'] not in sockets_connected:
-                data["error"] = "Identificação de solicitação informado não corresponde a uma identificação do sistema"
+                data["error"] = "Identificação de solicitação informada não corresponde a uma identificação do sistema"
                 return Response(data=data)
 
             # criação da esturutura para análise
@@ -49,9 +49,10 @@ def start_analysis(request):
 
             # etapa de extração de texto bruto do PDF ou HTML
             policy_status,text = requestUrl.text_extractor(request.data['url'], policy_under_analysis.id)
-            data['politica Generica'] = policy_status
+            data['politica_generica'] = policy_status
+
             # verificação se texto não é política de privacidade e retorno
-            if text == "Documento não é uma politica de privacidade":
+            if text == "Sistema considerou o documento como não sendo uma política de privacidade":
                 data["error"] = text
                 return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
             
