@@ -1,5 +1,3 @@
-from string import punctuation
-
 terms=[
     "coletamos",
     "coletaremos",
@@ -23,10 +21,6 @@ terms=[
     "solicitada",
     "poderá",
 ]
-
-punctuation = punctuation.replace('"', "").replace("'", "")
-
-terms.extend(list(punctuation))
 
 collect_words = set(terms)
 
