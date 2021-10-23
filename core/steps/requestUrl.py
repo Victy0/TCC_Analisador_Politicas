@@ -72,7 +72,7 @@ def text_extractor(request, file_id):
 
                         # se o valor recuperado for uma tag, recupera a string do mesmo
                         content = content if content.string == None else content.string
-                        com[idx] = com[idx] + str(content.string)
+                        com[idx] = com[idx] + str(content).replace('.', ';')
             
             table_str = ''.join(str(e) for e in com)
 
