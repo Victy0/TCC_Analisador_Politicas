@@ -4,6 +4,7 @@ from goose3 import Goose
 import re
 from pdfminer import high_level
 import requests
+from core.steps.auxiliary_token.especific_data_token import especific_data
 
 
 
@@ -106,12 +107,12 @@ def text_extractor(request, file_id):
         else:
             result_text = article.cleaned_text + table_str
 
-        # Verifica se no texto contem a palavra "Política de privacidade"
-        if result_text.lower().find("política de privacidade") != -1:
-            is_generic = generic_verification(result_text)
-            return is_generic, result_text
-        else: 
-            return False, "Sistema considerou o documento como não sendo uma política de privacidade" 
+    # Verifica se no texto contem a palavra "Política de privacidade"
+    if result_text.lower().find("política de privacidade") != -1:
+        is_generic = generic_verification(result_text)
+        return is_generic, result_text
+    else: 
+        return False, "Sistema considerou o documento como não sendo uma política de privacidade" 
 
 
 
@@ -128,15 +129,15 @@ def remove_file(file):
 # Função que verifica se a política de privacidade é genérica pelo seu tamanho ou por não conter um dos termos específicos
 #
 def generic_verification(policy):
-    especific_data=["cpf","email","e-mail","telefone", "senha","celular","sexo","endereço","cnpj","nome"] 
+   
     
     # Pontos para verificação 
     points = 0
     for data in especific_data: 
-        if re.findall(data,policy):
+        if re.findall(" "+data,policy):
             points = points + 1
             
-    if points < 2 or len(policy) < 5000 :
+    if points < 8 or len(policy) < 5000 :
        return  True
     else:
       return False        
