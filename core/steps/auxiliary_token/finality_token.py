@@ -1,6 +1,3 @@
-from string import punctuation
-
-
 terms=[
     "utilizará",
     "utilizado",
@@ -99,10 +96,6 @@ terms=[
     "oferecer",
     "oferecemos",
 ]
-
-punctuation = punctuation.replace('"', "").replace("'", "")
-
-terms.extend(list(punctuation))
 
 finality_words = set(terms)
 
