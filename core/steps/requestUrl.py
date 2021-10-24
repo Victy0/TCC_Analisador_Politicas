@@ -55,29 +55,31 @@ def text_extractor(request, file_id):
         table_str = ""
 
         for table in table_list:
-            idx_aux = -1
             com = []
-            for row in table.find_all("tr"):
+            for idx_row, row in enumerate(table.find_all("tr")):
                 col_list = row.find_all("td")
-
-                # foram array com as quantidade específica de colunas da tabela 
-                if(idx_aux == -1):
-                    for idx_c in range(len(col_list[0].contents)):
-                        com.append("")
-                    idx_aux = 0
                 
                 # agrupa o valor de todas as linhas na posição da coluna em que se encontra
-                for idx, actual_col in enumerate(col_list):
-                    for content in actual_col.contents:
+                for idx_col, actual_col in enumerate(col_list):
+
+                    # insere novo índice no array referente a coluna da tabela não mapeada
+                    if idx_row == 0:
+                        com.append("")
+
+                    for idx_content, content in enumerate(actual_col.contents):
 
                         # se o valor recuperado for uma tag, recupera a string do mesmo
                         content = content if content.string == None else content.string
-                        com[idx] = com[idx] + str(content).replace('.', ';')
-            
-            table_str = ''.join(str(e) for e in com)
+                        com[idx_col] = com[idx_col] + str(content).replace('.', ';')
+
+                        # colocar ': ' após o final de um header da tabela
+                        if (idx_content == len(actual_col.contents) - 1) and (idx_row == 0):
+                            com[idx_col] = com[idx_col] + ': '
+
+            table_str = '. '.join(str(e) for e in com)
 
         # Se não der certo a extração pelo goose, é extraido pelo beautiful soup
-        if article.cleaned_text == "" or len(article.cleaned_text)< 500 :
+        if article.cleaned_text == "" or len(article.cleaned_text) < 500 :
             
             # Remove tags desnecessárias para extração
             if (soup.find("footer") != None) and (soup.find("footer") != -1):
