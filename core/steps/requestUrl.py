@@ -136,7 +136,7 @@ def generic_verification(policy):
     # Pontos para verificação 
     points = 0
     for data in especific_data: 
-        if re.findall(" "+data,policy):
+        if re.findall(" " + data, policy):
             points = points + 1
             
     if points < 8 or len(policy) < 5000 :
