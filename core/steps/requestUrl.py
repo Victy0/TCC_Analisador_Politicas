@@ -5,6 +5,7 @@ import re
 from pdfminer import high_level
 import requests
 from core.steps.auxiliary_token.especific_data_token import especific_data
+import tabula
 
 
 
@@ -27,6 +28,17 @@ def text_extractor(request, file_id):
         extracted_text ="\n"
         
         counter = 0
+
+        tables = tabula.read_pdf(complete_name, pages="all",output_format="json")
+        print(tables[3]["data"][3])
+        
+        array=[]
+        # for index_table,table in enumerate(tables):
+            
+        for  index_table, table in enumerate(tables):
+           array.append(agroup_table(table))    
+        print(array)             
+
 
         # extrai o conteúdo de várias páginas do arquivo PDF
         while extracted_text != "":  
@@ -143,3 +155,19 @@ def generic_verification(policy):
        return  True
     else:
       return False        
+
+#
+# Retira texto das tabelas contidas em um pdf e os agrupa em strings
+#
+def agroup_table(table):
+  
+    array= []
+    for index_rows, rows in enumerate(table["data"]):
+            for index_position,position in enumerate(table["data"][index_rows]):
+                if index_rows == 0:
+                    array.append("")
+                if table["data"][index_rows][index_position]["text"] != "":    
+                    array[index_position] = array[index_position] + " "+table["data"][index_rows][index_position]["text"]    
+
+    table_str = '. '.join(str(e) for e in array)  
+    return table_str
