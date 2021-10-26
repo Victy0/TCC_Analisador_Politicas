@@ -67,9 +67,10 @@ def summarizer_text_ranking(raw_text, is_finality):
     for i, sentence in enumerate(sentence_list):
         for w in [t for t in tokenizer(sentence.lower()) if t not in stop_words]:
             if w in freq:
-                ranking[i] += freq[w]
-                if w in key_words:
-                    ranking[i]+= 1000
+                if (is_finality) and (w in finality_words):
+                    ranking[i] += freq[w]
+                if (not is_finality) and (w in key_words):
+                    ranking[i] += 1000
                     
     # número de sentenças que geraram o sumário: fixado até 10 para finalidade e 5 para coleta
     num_sentences = 10 if is_finality else 5
