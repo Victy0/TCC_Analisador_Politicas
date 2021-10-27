@@ -21,24 +21,15 @@ def text_extractor(request, file_id):
     # Verifica o tipo de arquivo se é PDF e extrai do PDF
     if exten == '.pdf':
 
-        r = requests.get(request,allow_redirects=True)
-        complete_name = os.path.join('files', file_id+'.pdf')
+        # baixar arquivo PDF
+        r = requests.get(request, allow_redirects=True)
+        complete_name = os.path.join('files', file_id + '.pdf')
         open(complete_name,'wb').write(r.content)
          
         extracted_text ="\n"
         
-        counter = 0
-
-        # tables = tabula.read_pdf(complete_name, pages=,output_format="json")
-        # print(tables[3]["data"][3])
+        counter = 0 
         
-        # array=[]
-        # # for index_table,table in enumerate(tables):
-            
-        # for  index_table, table in enumerate(tables):
-        #    array.append(agroup_table(table))    
-        
-
         # extrai o conteúdo de várias páginas do arquivo PDF
         while extracted_text != "":  
             # high_level.extract_text extrai o texto de uma pagina do arquivo PDF
@@ -50,8 +41,12 @@ def text_extractor(request, file_id):
 
                 for table in tables:
                     page_text, first_text, last_text = agroup_table(table)
-                    # remove a tabela do texto extraido e coloca a formatada
-                    extracted_text = ( extracted_text[0 : extracted_text.find(first_text)] ) + ( page_text ) + ( extracted_text[(extracted_text.find(last_text) + len(last_text)) :] )
+
+                    # remove a tabela do texto extraido e coloca a tabela formatada caso seja realmente uma tabela
+                    if page_text != None:
+                        test_1 = extracted_text[0 : extracted_text.find(first_text)]
+                        test_2 = extracted_text[(extracted_text.find(last_text) + len(last_text)) :]
+                        extracted_text = ( test_1 ) + ( page_text ) + ( test_2 )
 
             # Concatena o resultado  anterior com o texto extraido da página atual
             result_text = result_text + extracted_text
@@ -174,13 +169,18 @@ def agroup_table(table):
     first_text=""
     
     for index_rows, rows in enumerate(table["data"]):
-            for index_position,position in enumerate(rows):
-                if index_rows == 0:
-                    array.append("")
-                if position["text"] != "" : 
-                    if first_text == "" :
-                        first_text = position["text"] 
-                    array[index_position] = array[index_position] + " "+position["text"]    
-                    last_text=position["text"]
-    table_str = '. '.join(str(e) for e in array)  
+
+        if len(rows) == 1:
+            return None, None, None
+
+        for index_position, position in enumerate(rows):
+            if index_rows == 0:
+                array.append("")
+            if position["text"] != "" : 
+                if first_text == "" :
+                    first_text = position["text"] 
+                array[index_position] = array[index_position] + " " + position["text"]    
+                last_text = position["text"]
+
+    table_str = '. '.join(str(e).replace('.',';') for e in array)  
     return table_str, first_text, last_text

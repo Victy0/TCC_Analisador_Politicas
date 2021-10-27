@@ -71,6 +71,7 @@ def summarizer_text_ranking(raw_text, is_finality):
                     ranking[i] += freq[w]
                 if (not is_finality) and (w in key_words):
                     ranking[i] += 1000
+                ranking[i] += freq[w]
                     
     # número de sentenças que geraram o sumário: fixado até 10 para finalidade e 5 para coleta
     num_sentences = 10 if is_finality else 5
