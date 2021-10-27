@@ -29,21 +29,24 @@ def text_extractor(request, file_id):
         
         counter = 0
 
-        tables = tabula.read_pdf(complete_name, pages="all",output_format="json")
-        print(tables[3]["data"][3])
+        # tables = tabula.read_pdf(complete_name, pages=,output_format="json")
+        # print(tables[3]["data"][3])
         
-        array=[]
-        # for index_table,table in enumerate(tables):
+        # array=[]
+        # # for index_table,table in enumerate(tables):
             
-        for  index_table, table in enumerate(tables):
-           array.append(agroup_table(table))    
-        print(array)             
-
+        # for  index_table, table in enumerate(tables):
+        #    array.append(agroup_table(table))    
+        
 
         # extrai o conteúdo de várias páginas do arquivo PDF
         while extracted_text != "":  
             # high_level.extract_text extrai o texto de uma pagina do arquivo PDF
             extracted_text = high_level.extract_text(complete_name, "", [counter],True,'utf-8')
+            if extracted_text != "":
+                tables = tabula.read_pdf(complete_name, pages=[counter+1],output_format="json")
+                for  index_table, table in enumerate(tables):
+                    page_text,first_text,last_text= agroup_table(table)
 
             # Concatena o resultado  anterior com o texto extraido da página atual
             result_text = result_text + extracted_text
@@ -162,12 +165,17 @@ def generic_verification(policy):
 def agroup_table(table):
   
     array= []
+    last_text= ""
+    first_text=""
+    
     for index_rows, rows in enumerate(table["data"]):
-            for index_position,position in enumerate(table["data"][index_rows]):
+            for index_position,position in enumerate(rows):
                 if index_rows == 0:
                     array.append("")
-                if table["data"][index_rows][index_position]["text"] != "":    
-                    array[index_position] = array[index_position] + " "+table["data"][index_rows][index_position]["text"]    
-
+                if position["text"] != "" : 
+                    if first_text == "" :
+                        first_text = position["text"] 
+                    array[index_position] = array[index_position] + " "+position["text"]    
+                    last_text=position["text"]
     table_str = '. '.join(str(e) for e in array)  
-    return table_str
+    return table_str, first_text, last_text
