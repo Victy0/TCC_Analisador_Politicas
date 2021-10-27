@@ -43,10 +43,15 @@ def text_extractor(request, file_id):
         while extracted_text != "":  
             # high_level.extract_text extrai o texto de uma pagina do arquivo PDF
             extracted_text = high_level.extract_text(complete_name, "", [counter],True,'utf-8')
+
             if extracted_text != "":
-                tables = tabula.read_pdf(complete_name, pages=[counter+1],output_format="json")
-                for  index_table, table in enumerate(tables):
-                    page_text,first_text,last_text= agroup_table(table)
+                # extração de tabelas da página atual 
+                tables = tabula.read_pdf(complete_name, pages = [counter+1], output_format="json")
+
+                for table in tables:
+                    page_text, first_text, last_text = agroup_table(table)
+                    # remove a tabela do texto extraido e coloca a formatada
+                    extracted_text = ( extracted_text[0 : extracted_text.find(first_text)] ) + ( page_text ) + ( extracted_text[(extracted_text.find(last_text) + len(last_text)) :] )
 
             # Concatena o resultado  anterior com o texto extraido da página atual
             result_text = result_text + extracted_text
