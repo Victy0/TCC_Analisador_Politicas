@@ -10,6 +10,7 @@ pip install pdfminer.six
 pip install aiohttp 
 pip install python-socketio
 pip install django-cors-headers
+pip install tabula-py
 
 #permitir execução de Scripts no Windows (abrir PowerShell em modo administrador)
 Type Set-ExecutionPolicy RemoteSigned
