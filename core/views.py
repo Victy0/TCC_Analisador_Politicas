@@ -1,7 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
-
 from core.models import AnalyticalReview
 from core.steps import requestUrl
 from core.steps import summarizer

@@ -67,9 +67,11 @@ def summarizer_text_ranking(raw_text, is_finality):
     for i, sentence in enumerate(sentence_list):
         for w in [t for t in tokenizer(sentence.lower()) if t not in stop_words]:
             if w in freq:
+                if (is_finality) and (w in finality_words):
+                    ranking[i] += freq[w]
+                if (not is_finality) and (w in key_words):
+                    ranking[i] += 1000
                 ranking[i] += freq[w]
-                if w in key_words:
-                    ranking[i]+= 1000
                     
     # número de sentenças que geraram o sumário: fixado até 10 para finalidade e 5 para coleta
     num_sentences = 10 if is_finality else 5
@@ -146,17 +148,22 @@ def summarizer_text(raw_text, raw_data):
     sentence_idx_finality = list(set(sentence_idx_finality) - set(list_idx_of_ignore_distant_senteces(sentence_idx_finality)))
     sentence_idx_collect = list(set(sentence_idx_collect) - set(list_idx_of_ignore_distant_senteces(sentence_idx_collect))) 
 
-    # junção das sentenças de finalidade   - pode retornar diretamente o texto ou entar no sumarizar por ranking, porém sumarizador por ranking deixa mais objetivo
-    sumarized_text_collect = "".join(
-        [sentence_list[idx] for idx in sorted(sentence_idx_collect)]
-    )
-    data["coleta"] = summarizer_text_ranking(sumarized_text_collect, False)
-
     # junção das sentenças de finalidade
     sumarized_text_finality = "".join(
         [sentence_list[idx] for idx in sorted(sentence_idx_finality)]
     )
     data["finalidade"] = summarizer_text_ranking(sumarized_text_finality, True)
+
+    # remover informações de finalidade em coleta
+    sentence_list_finality = nltk.sent_tokenize(data["finalidade"])
+    sentences_in_finality = [i for i, s in enumerate(sentence_list) if s in sentence_list_finality ]
+    del sentence_list_finality
+
+    # junção das sentenças de coleta
+    sumarized_text_collect = "".join(
+        [sentence_list[idx] for idx in sorted(sentence_idx_collect) if idx not in sentences_in_finality]
+    )
+    data["coleta"] = summarizer_text_ranking(sumarized_text_collect, False)
     
     return data
 
