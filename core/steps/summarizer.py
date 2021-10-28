@@ -148,17 +148,22 @@ def summarizer_text(raw_text, raw_data):
     sentence_idx_finality = list(set(sentence_idx_finality) - set(list_idx_of_ignore_distant_senteces(sentence_idx_finality)))
     sentence_idx_collect = list(set(sentence_idx_collect) - set(list_idx_of_ignore_distant_senteces(sentence_idx_collect))) 
 
-    # junção das sentenças de finalidade   - pode retornar diretamente o texto ou entar no sumarizar por ranking, porém sumarizador por ranking deixa mais objetivo
-    sumarized_text_collect = "".join(
-        [sentence_list[idx] for idx in sorted(sentence_idx_collect)]
-    )
-    data["coleta"] = summarizer_text_ranking(sumarized_text_collect, False)
-
     # junção das sentenças de finalidade
     sumarized_text_finality = "".join(
         [sentence_list[idx] for idx in sorted(sentence_idx_finality)]
     )
     data["finalidade"] = summarizer_text_ranking(sumarized_text_finality, True)
+
+    # remover informações de finalidade em coleta
+    sentence_list_finality = nltk.sent_tokenize(data["finalidade"])
+    sentences_in_finality = [i for i, s in enumerate(sentence_list) if s in sentence_list_finality ]
+    del sentence_list_finality
+
+    # junção das sentenças de coleta
+    sumarized_text_collect = "".join(
+        [sentence_list[idx] for idx in sorted(sentence_idx_collect) if idx not in sentences_in_finality]
+    )
+    data["coleta"] = summarizer_text_ranking(sumarized_text_collect, False)
     
     return data
 
