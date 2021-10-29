@@ -27,7 +27,6 @@ def start_analysis(request):
 
             # instância da resposta do endpoint
             data = {}
-            policy_status= ""
 
             # verificação se id informado foi gerado pelo sistema
             if request.data['id'] not in sockets_connected:
@@ -47,8 +46,7 @@ def start_analysis(request):
                 return Response("")
 
             # etapa de extração de texto bruto do PDF ou HTML
-            policy_status,text = requestUrl.text_extractor(request.data['url'], policy_under_analysis.id)
-            data['politica_generica'] = policy_status
+            data['politica_generica'], text = requestUrl.text_extractor(request.data['url'], policy_under_analysis.id)
 
             # verificação se texto não é política de privacidade e retorno
             if text == "Sistema considerou o documento como não sendo uma política de privacidade":
@@ -62,6 +60,7 @@ def start_analysis(request):
             
             # etapa de sumarização do texto bruto
             data = summarizer.summarizer_text(text, data)
+            del text
 
             # verifica se análise foi cancelada antes da próxima etapa 
             if(policy_under_analysis.cancel):

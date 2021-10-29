@@ -60,8 +60,11 @@ def summarizer_text_ranking(raw_text, is_finality):
     if len(sentence_list) <= 2:
         return raw_text
 
+    del raw_text
+
     # cálculo da frequência dos tokens (possivelmente será alterado)
     freq = nltk.probability.FreqDist(tokens)
+    del tokens
 
     # ranking de sentenças
     for i, sentence in enumerate(sentence_list):
@@ -72,23 +75,23 @@ def summarizer_text_ranking(raw_text, is_finality):
                 if (not is_finality) and (w in key_words):
                     ranking[i] += 1000
                 ranking[i] += freq[w]
+    del freq
                     
     # número de sentenças que geraram o sumário: fixado até 10 para finalidade e 5 para coleta
     num_sentences = 10 if is_finality else 5
 
     if len(sentence_list) < num_sentences:
-        num_max_sentence = len(sentence_list)
+        num_sentences = len(sentence_list)
     else:
-        num_max_sentence = num_sentences
+        num_sentences = num_sentences
 
     # recuperação dos índices que obtiveram as maiores pontuações, obedecendo o número delimitador de sentenças recuperadas
     # string '\n' indica o fim de uma sentença
-    sentences_idx = nlargest(num_max_sentence, ranking, key = ranking.get)
-    sumarized_text = "\n".join(
+    sentences_idx = nlargest(num_sentences, ranking, key = ranking.get)
+    
+    return "\n".join(
         [sentence_list[j] for j in sorted(sentences_idx)]
     )
-
-    return sumarized_text
 
 
 
@@ -98,6 +101,7 @@ def summarizer_text_ranking(raw_text, is_finality):
 def summarizer_text(raw_text, raw_data): 
 
     data = raw_data
+    del raw_data
 
     # Preprocessamento do texto
     raw_text = (
@@ -122,7 +126,8 @@ def summarizer_text(raw_text, raw_data):
 
     # se sentenças menor ou igual à 3, não será sumarizado e retornará o texto de entrada
     if len(sentence_list) <= 3:
-        return raw_text  
+        return raw_text
+    del raw_text  
 
     sentence_idx_finality = []
     last_i_finality = -1
@@ -152,7 +157,10 @@ def summarizer_text(raw_text, raw_data):
     sumarized_text_finality = "".join(
         [sentence_list[idx] for idx in sorted(sentence_idx_finality)]
     )
+    del sentence_idx_finality
+
     data["finalidade"] = summarizer_text_ranking(sumarized_text_finality, True)
+    del sumarized_text_finality
 
     # remover informações de finalidade em coleta
     sentence_list_finality = nltk.sent_tokenize(data["finalidade"])
@@ -163,7 +171,13 @@ def summarizer_text(raw_text, raw_data):
     sumarized_text_collect = "".join(
         [sentence_list[idx] for idx in sorted(sentence_idx_collect) if idx not in sentences_in_finality]
     )
+    del sentence_idx_collect
+    del sentences_in_finality
+
+    del sentence_list
+
     data["coleta"] = summarizer_text_ranking(sumarized_text_collect, False)
+    del sumarized_text_collect
     
     return data
 
