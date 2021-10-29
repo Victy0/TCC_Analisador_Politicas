@@ -1,5 +1,3 @@
-from string import punctuation
-
 terms=[
     "cpf",
     "email",
@@ -34,9 +32,7 @@ terms=[
     "idioma",
     "pais",
     "profissão",
-    ] 
-
-
+    ]
 
 especific_data= set(terms)
 
