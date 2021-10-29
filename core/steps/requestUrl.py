@@ -20,7 +20,7 @@ def text_extractor(request, file_id):
 
     # Verifica o tipo de arquivo se é PDF e extrai do PDF
     if exten == '.pdf':
-
+        del exten
         # baixar arquivo PDF
         r = requests.get(request, allow_redirects=True)
         complete_name = os.path.join('files', file_id + '.pdf')
@@ -41,7 +41,7 @@ def text_extractor(request, file_id):
 
                 for table in tables:
                     page_text, first_text, last_text = agroup_table(table)
-
+                    extracted_text=extracted_text.replace("\n", "")
                     # remove a tabela do texto extraido e coloca a tabela formatada caso seja realmente uma tabela
                     if page_text != None:
                         test_1 = extracted_text[0 : extracted_text.find(first_text)]
@@ -51,7 +51,7 @@ def text_extractor(request, file_id):
             # Concatena o resultado  anterior com o texto extraido da página atual
             result_text = result_text + extracted_text
             counter = counter + 1
-
+        
         # remove arquivo PDF após a extração
         remove_file(complete_name)   
 
@@ -120,8 +120,9 @@ def text_extractor(request, file_id):
                 soup.table.extract()
 
             result_text = soup.get_text() + table_str
-
+           
         else:
+            
             result_text = article.cleaned_text + table_str
 
     # Verifica se no texto contem a palavra "Política de privacidade"
@@ -153,10 +154,12 @@ def generic_verification(policy):
     for data in especific_data: 
         if re.findall(" " + data, policy):
             points = points + 1
-            
+    del data       
     if points < 8 or len(policy) < 5000 :
-       return  True
+        del points
+        return  True
     else:
+      del points
       return False        
 
 #
@@ -167,6 +170,7 @@ def agroup_table(table):
     array= []
     last_text= ""
     first_text=""
+
     
     for index_rows, rows in enumerate(table["data"]):
 
@@ -180,7 +184,14 @@ def agroup_table(table):
                 if first_text == "" :
                     first_text = position["text"] 
                 array[index_position] = array[index_position] + " " + position["text"]    
-                last_text = position["text"]
+        
+    if len(array[-1]) > 3:
+        words = array[-1].split(" ")
+        last_text = words[-5]+ " "+ words[-4]+ " " + words[-3] + " " + words[-2] + " " + words[-1]
+    else:
+        last_text = array[-1]
 
-    table_str = '. '.join(str(e).replace('.',';') for e in array)  
-    return table_str, first_text, last_text
+    table_str = '. '.join(str(e).replace('.',';') for e in array) 
+    
+   
+    return ' '.join(dict.fromkeys(table_str.split())), first_text, last_text
