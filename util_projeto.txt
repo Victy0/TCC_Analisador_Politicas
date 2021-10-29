@@ -1,0 +1,28 @@
+#instalação necessária pip
+pip install django
+pip install djangorestframework
+pip install markdown
+pip install django-filter
+pip install sumy
+pip install goose3
+pip install beautifulsoup4
+pip install pdfminer.six 
+pip install aiohttp 
+pip install python-socketio
+pip install django-cors-headers
+pip install tabula-py
+
+#permitir execução de Scripts no Windows (abrir PowerShell em modo administrador)
+Type Set-ExecutionPolicy RemoteSigned
+
+#criar venv
+py -m venv venv
+
+#iniciar venv
+venv/Scripts/activate
+
+#iniciar server
+python manage.py runserver 8000
+
+#desativar venv
+deactivate

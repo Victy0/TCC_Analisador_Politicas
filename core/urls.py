@@ -4,5 +4,6 @@ from core import views
 app_name = 'core'
 
 urlpatterns = [
-    path('', views.read_news, name="detail"),
+    path('start', views.start_analysis, name="iniciar_analise"),
+    path('cancel', views.cancel_analysis, name="cancelar_analise"),
 ]
