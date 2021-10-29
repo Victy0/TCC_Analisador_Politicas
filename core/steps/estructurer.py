@@ -4,10 +4,7 @@ from core.steps.auxiliary_token.especific_data_token import especific_data
 #
 # método que sinaliza termos específicos no texto
 #
-def sinalize(request):
-   
-    
-    # Array de palavras a serem sinalizadas     
+def sinalize(request):    
     
     # Sinalização dos dados que serão coletados no texto sumarizado focado nas informações de coleta 
     for word in especific_data:
@@ -20,6 +17,7 @@ def sinalize(request):
     for word in especific_data:
         compiled = re.compile(re.escape(" " + word), re.IGNORECASE)
         request["finalidade"] = compiled.sub("<b>" + " " + word + "</b>", request["finalidade"])
-    request ["finalidade"] = request ["finalidade"].replace("\n","<br>") 
+
+    request["finalidade"] = request ["finalidade"].replace("\n","<br>") 
     
     return request
