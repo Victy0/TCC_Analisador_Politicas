@@ -51,7 +51,10 @@ def text_extractor(request, file_id):
             # Concatena o resultado  anterior com o texto extraido da página atual
             result_text = result_text + extracted_text
             counter = counter + 1
-        
+        del counter
+        del extracted_text
+        del table
+        del tables
         # remove arquivo PDF após a extração
         remove_file(complete_name)   
 
@@ -120,9 +123,9 @@ def text_extractor(request, file_id):
                 soup.table.extract()
 
             result_text = soup.get_text() + table_str
-           
+            del soup
         else:
-            
+            del soup
             result_text = article.cleaned_text + table_str
 
     # Verifica se no texto contem a palavra "Política de privacidade"
@@ -185,13 +188,13 @@ def agroup_table(table):
                     first_text = position["text"] 
                 array[index_position] = array[index_position] + " " + position["text"]    
         
-    if len(array[-1]) > 3:
+    if len(array[-1]) > 5:
         words = array[-1].split(" ")
         last_text = words[-5]+ " "+ words[-4]+ " " + words[-3] + " " + words[-2] + " " + words[-1]
     else:
         last_text = array[-1]
 
     table_str = '. '.join(str(e).replace('.',';') for e in array) 
-    
+    del array
    
     return ' '.join(dict.fromkeys(table_str.split())), first_text, last_text
