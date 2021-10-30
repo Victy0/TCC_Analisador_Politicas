@@ -39,14 +39,15 @@ def process_analysis(request):
 
             # incluindo a análise na lista de políticas em análise
             policies_under_analysis_review.append(policy_under_analysis)
+            del policy_under_analysis
 
             # verifica se análise foi cancelada antes da próxima etapa 
-            if(policy_under_analysis.cancel):
-                cancel_policy_under_analysis(policy_under_analysis.id)
+            if(get_cancel_status(request.data['id'])):
+                remove_policy_under_analysis(request.data['id'])
                 return Response("")
 
             # etapa de extração de texto bruto do PDF ou HTML
-            data['politica_generica'], text = requestUrl.text_extractor(request.data['url'], policy_under_analysis.id)
+            data['politica_generica'], text = requestUrl.text_extractor(request.data['url'], request.data['id'])
 
             # verificação se texto não é política de privacidade e retorno
             if text == "Sistema considerou o documento como não sendo uma política de privacidade":
@@ -54,8 +55,8 @@ def process_analysis(request):
                 return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
             
             # verifica se análise foi cancelada antes da próxima etapa 
-            if(policy_under_analysis.cancel):
-                cancel_policy_under_analysis(policy_under_analysis.id)
+            if(get_cancel_status(request.data['id'])):
+                remove_policy_under_analysis(request.data['id'])
                 return Response("")
             
             # etapa de sumarização do texto bruto
@@ -63,16 +64,15 @@ def process_analysis(request):
             del text
 
             # verifica se análise foi cancelada antes da próxima etapa 
-            if(policy_under_analysis.cancel):
-                cancel_policy_under_analysis(policy_under_analysis.id)
+            if(get_cancel_status(request.data['id'])):
+                remove_policy_under_analysis(request.data['id'])
                 return Response("")
         
             # etapa de sinalização do texto sumarizado
             data = estructurer.sinalize(data)
 
-            # disconectar socket
-            disconnect(policy_under_analysis.id)
-
+            remove_policy_under_analysis(request.data['id'])
+            
             # retorno de resposta
             return Response(data)
     else:
@@ -87,22 +87,35 @@ def process_analysis(request):
 
 
 #
-# método para cancelar política de privacidade em análise em processamento
+# método para remover definitivamente política de privacidade em análise em processamento
 #
-def cancel_policy_under_analysis(review_id):
+def remove_policy_under_analysis(review_id):
     # recupera index pelo id informado
-    policy_index = next((p for p in policies_under_analysis_review if p.id == review_id), -1)
+    policy_index = next((i for i, policy in enumerate(policies_under_analysis_review) if policy.id == review_id), -1)
 
     # verifica se o id informado existe
     if(policy_index != -1):
         # caso sim, remove o arquivo criado e da lista de políticas em análise
-        requestUrl.removeFile(review_id + '.pdf')
+        requestUrl.remove_file(review_id + '.pdf')
         policies_under_analysis_review.pop(policy_index)
+
+        # desconectar socket
+        disconnect(review_id)
+
+
+#
+#
+#
+def get_cancel_status(review_id):
+    # recupera index pelo id informado
+    policy_review = next((p for p in policies_under_analysis_review if p.id == review_id), -1)
+
+    return policy_review.cancel
 
 
 
 # 
-# método POST para análise de política de privacidade
+# método POST para solicitar cancelamento de análise de política de privacidade
 # 
 @api_view(['POST', ])
 def cancel_analysis(request):
@@ -111,7 +124,7 @@ def cancel_analysis(request):
         if request.method == 'POST':
 
             # recupera index pelo id informado
-            policy_index = next((p for p in policies_under_analysis_review if p.id == request.data['id']), -1)
+            policy_index = next((i for i, policy in enumerate(policies_under_analysis_review) if policy.id == request.data['id']), -1)
 
             # verifica se o id informado existe
             if(policy_index != -1):
