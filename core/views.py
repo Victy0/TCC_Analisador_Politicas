@@ -20,7 +20,7 @@ policies_under_analysis_review = []
 # método POST para análise de política de privacidade
 # 
 @api_view(['POST', ])
-def start_analysis(request):
+def process_analysis(request):
     # Verifica se contêm o parametro "url" e "id" no corpo da requisição
     if "url" in request.data and "id" in request.data:
         if request.method == 'POST':
