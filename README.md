@@ -31,7 +31,7 @@ Ativar venv:
 
     venv/Scripts/activate
 
-Intalar dependências:
+Instalar dependências:
 
     pip install -r requirements/local.txt
 
@@ -40,5 +40,9 @@ Rodar servidor na venv (porta 8000):
     python manage.py runserver 8000
 
 # Endpoints
+
+Link para documentação da Api:
+
+    https://documenter.getpostman.com/view/13202167/UVByHA6H
 
 
