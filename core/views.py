@@ -31,7 +31,7 @@ def process_analysis(request):
             # verificação se id informado foi gerado pelo sistema
             if request.data['id'] not in sockets_connected:
                 data["error"] = "Identificação de solicitação informada não corresponde a uma identificação do sistema"
-                return Response(data=data)
+                return Response(data=data, status=status.HTTP_401_UNAUTHORIZED)
 
             # criação da esturutura para análise
             policy_under_analysis = AnalyticalReview()
