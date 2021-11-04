@@ -28,6 +28,13 @@ def process_analysis(request):
             # instância da resposta do endpoint
             data = {}
 
+            # easter-egg (famoso 'ovo de páscoa' em tradução literal)
+            if request.data['url'] in ['café', 'cafe', 'cofee']:
+                data["error"] = "Isso só pode ser piada! Erro 418 do HTTP indica que não se pode fazer café com um bule de chá."
+                # remover socket da lista de sockets em espera para processamento
+                remove_sockets_connected_awaiting(request.data['id'])
+                return Response(data = data, status = status.HTTP_418_IM_A_TEAPOT)
+
             # verificação se id informado foi gerado pelo sistema
             if request.data['id'] not in sockets_connected_awaiting:
                 data["error"] = "Identificação de solicitação informada não corresponde a uma identificação do sistema"
@@ -35,7 +42,7 @@ def process_analysis(request):
                 # remover socket da lista de sockets em espera para processamento
                 remove_sockets_connected_awaiting(request.data['id'])
 
-                return Response(data=data, status=status.HTTP_401_UNAUTHORIZED)
+                return Response(data=data, status = status.HTTP_401_UNAUTHORIZED)
             
             # remover socket da lista de sockets em espera para processamento
             remove_sockets_connected_awaiting(request.data['id'])
