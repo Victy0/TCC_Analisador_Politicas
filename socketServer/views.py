@@ -16,8 +16,8 @@ basedir = os.path.dirname(os.path.realpath(__file__))
 sio = socketio.Server(async_mode=async_mode, cors_allowed_origins='*')
 thread = None
 
-# lista de sockets
-sockets_connected = []
+# lista de sockets que não iniciaram processamento
+sockets_connected_awaiting = []
 
 
 
@@ -52,7 +52,7 @@ def background_thread():
 def connect(sid, environ):
 
     # inclusão do id na lista de sockets
-    sockets_connected.append(sid)
+    sockets_connected_awaiting.append(sid)
     print("Socket conectado: " + sid)
     
     # mensagem de conexão desnecessário, pois pode recuperar do id do próprio socket
@@ -72,7 +72,7 @@ def connect_manual(request):
         sid = random.choice(string.ascii_letters) + str(round(time.time() * 1000)) + random.choice(string.ascii_letters)
 
         # inclusão do id na lista de sockets
-        sockets_connected.append(sid)
+        sockets_connected_awaiting.append(sid)
         print("Socket manual conectado: " + sid)
 
         # retorno de resposta
@@ -88,9 +88,21 @@ def connect_manual(request):
 @sio.event
 def disconnect(sid):
 
-    # remoção do id da lista de sockets
-    sockets_connected.remove(sid)
+    # remoção do id da lista de sockets que não iniciaram processamento se estiver
+    if sid in sockets_connected_awaiting:    
+        sockets_connected_awaiting.remove(sid)
+
     print('Socket desconectado: ' + sid)
+
+
+
+#
+# método para remover socket da lista de sockets que não iniciaram processamento
+#
+def remove_sockets_connected_awaiting(socket_id):
+
+    # remoção do id da lista de sockets
+    sockets_connected_awaiting.remove(socket_id)
 
 
 
