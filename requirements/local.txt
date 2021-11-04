@@ -1,4 +1,4 @@
-aiohttp==3.7.4.post0
+aiohttp==3.7.4
 asgiref==3.4.1
 async-timeout==3.0.1
 attrs==21.2.0
@@ -26,7 +26,7 @@ joblib==1.0.1
 lxml==4.6.3
 Markdown==3.3.4
 multidict==5.2.0
-nltk==3.6.3
+nltk==3.6.4
 numpy==1.21.3
 pandas==1.3.4
 pdfminer.six==20201018

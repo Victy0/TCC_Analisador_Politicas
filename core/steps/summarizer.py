@@ -122,12 +122,7 @@ def summarizer_text(raw_text, raw_data):
     raw_text = " ".join(raw_text.split())
 
     # tokenization e recuperação da listagem de senteças
-    sentence_list = nltk.sent_tokenize(raw_text)
-
-    # se sentenças menor ou igual à 3, não será sumarizado e retornará o texto de entrada
-    if len(sentence_list) <= 3:
-        return raw_text
-    del raw_text  
+    sentence_list = nltk.sent_tokenize(raw_text) 
 
     sentence_idx_finality = []
     last_i_finality = -1
