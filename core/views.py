@@ -1,6 +1,7 @@
-from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from rest_framework import status
+
 from core.models import AnalyticalReview
 from core.steps import requestUrl
 from core.steps import summarizer
@@ -21,15 +22,18 @@ policies_under_analysis_review = []
 # 
 @api_view(['POST', ])
 def process_analysis(request):
-    # Verifica se contêm o parametro "url" e "id" no corpo da requisição
-    if "url" in request.data and "id" in request.data:
-        if request.method == 'POST':
 
-            # instância da resposta do endpoint
-            data = {}
+    # instância da resposta do endpoint
+    data = {}
+
+    # Verifica se contêm o parametro "url" e "id" no corpo da requisição
+    if "url" in request.data and "id" in request.data:        
+        # Verifica o tipo do método solicitado
+        if request.method == 'POST':
 
             # easter-egg (famoso 'ovo de páscoa' em tradução literal)
             if request.data['url'] in ['café', 'cafe', 'cofee']:
+                data["sucess"] = False
                 data["error"] = "Isso só pode ser piada! Erro 418 do HTTP indica que não se pode fazer café com um bule de chá."
                 # remover socket da lista de sockets em espera para processamento
                 remove_sockets_connected_awaiting(request.data['id'])
@@ -37,6 +41,7 @@ def process_analysis(request):
 
             # verificação se id informado foi gerado pelo sistema
             if request.data['id'] not in sockets_connected_awaiting:
+                data["sucess"] = False
                 data["error"] = "Identificação de solicitação informada não corresponde a uma identificação do sistema"
 
                 # remover socket da lista de sockets em espera para processamento
@@ -56,7 +61,7 @@ def process_analysis(request):
             del policy_under_analysis
 
             # verifica se análise foi cancelada antes da próxima etapa 
-            if(get_cancel_status(request.data['id'])):
+            if get_cancel_status(request.data['id']):
                 remove_policy_under_analysis(request.data['id'])
                 return Response("", status = 499)
 
@@ -65,11 +70,13 @@ def process_analysis(request):
 
             # verificação se texto não é política de privacidade e retorno
             if text == "Sistema considerou o documento como não sendo uma política de privacidade" or text == "Sistema não possui suporte para o arquivo indicado na URL":
-                data["error"] = text
-                return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
+                new_data = {}
+                new_data["sucess"] = False
+                new_data["error"] = text
+                return Response(data = new_data, status = status.HTTP_400_BAD_REQUEST)
             
             # verifica se análise foi cancelada antes da próxima etapa 
-            if(get_cancel_status(request.data['id'])):
+            if get_cancel_status(request.data['id']):
                 remove_policy_under_analysis(request.data['id'])
                 return Response("", status = 499)
             
@@ -78,7 +85,7 @@ def process_analysis(request):
             del text
 
             # verifica se análise foi cancelada antes da próxima etapa 
-            if(get_cancel_status(request.data['id'])):
+            if get_cancel_status(request.data['id']):
                 remove_policy_under_analysis(request.data['id'])
                 return Response("", status = 499)
         
@@ -88,13 +95,20 @@ def process_analysis(request):
             remove_policy_under_analysis(request.data['id'])
             
             # retorno de resposta
-            return Response(data)
+            data["sucess"] = True
+            return Response(data, status.HTTP_200_OK)
+
+        else:
+            data["sucess"] = False
+            data["error"] = "A rquisição precisa ser do tipo POST para que seja aceita"
+            return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
+
     else:
         #formatação de mensagem de erro
         message_complement = ("'id'" if ("id" not in request.data) else "") + ("'url'" if ("url" not in request.data) else "")
         message_complement = (message_complement[0: 4] + " e " + message_complement[4:]) if len(message_complement) > 6 else message_complement
 
-        data = {}
+        data["sucess"] = False
         data["error"] = "Falta do parâmetro " + message_complement + " no corpo da requisição"
         return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
 
@@ -108,7 +122,7 @@ def remove_policy_under_analysis(review_id):
     policy_index = next((i for i, policy in enumerate(policies_under_analysis_review) if policy.id == review_id), -1)
 
     # verifica se o id informado existe
-    if(policy_index != -1):
+    if policy_index != -1:
         # caso sim, remove o arquivo criado e da lista de políticas em análise
         requestUrl.remove_file(review_id + '.pdf')
         policies_under_analysis_review.pop(policy_index)
@@ -117,8 +131,9 @@ def remove_policy_under_analysis(review_id):
         disconnect(review_id)
 
 
+
 #
-#
+# método para recuperar o status de cancelamento da analise indicada pelo id
 #
 def get_cancel_status(review_id):
     # recupera index pelo id informado
@@ -133,21 +148,30 @@ def get_cancel_status(review_id):
 # 
 @api_view(['POST', ])
 def cancel_analysis(request):
+    
+    data = {}
+
     # Verifica se contêm o parametro "id" no corpo da requisição
     if "id" in request.data:
+        # Verifica o tipo do método solicitado
         if request.method == 'POST':
 
             # recupera index pelo id informado
             policy_index = next((i for i, policy in enumerate(policies_under_analysis_review) if policy.id == request.data['id']), -1)
 
             # verifica se o id informado existe
-            if(policy_index != -1):
+            if policy_index != -1:
                 # caso sim, seta como cancelado na lista de políticas de privacidade em análise
                 policies_under_analysis_review[policy_index].cancel = True
 
-            # TODO verificar o retorno
-            return Response(True)
+            data["sucess"] = True
+            return Response(data, status.HTTP_200_OK)
+        
+        else:
+            data["sucess"] = False
+            data["error"] = "A rquisição precisa ser do tipo POST para que seja aceita"
+            return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
     else:
-        data = {}
+        data["sucess"] = False
         data["error"] = "Falta do parâmetro 'id' no corpo da requisição"
         return Response(data = data, status = status.HTTP_400_BAD_REQUEST)       

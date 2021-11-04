@@ -1,11 +1,12 @@
 import os
+import random
 import socketio
 import string
-import random
 import time
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import status
 
 
 
@@ -15,6 +16,8 @@ basedir = os.path.dirname(os.path.realpath(__file__))
 # instanciar servidor socket io
 sio = socketio.Server(async_mode=async_mode, cors_allowed_origins='*')
 thread = None
+
+
 
 # lista de sockets que não iniciaram processamento
 sockets_connected_awaiting = []
@@ -66,6 +69,10 @@ def connect(sid, environ):
 #
 @api_view(['POST', ])
 def connect_manual(request):
+
+    data = {}
+
+    # Verifica o tipo do método solicitado
     if request.method == 'POST':
 
         # criação do id
@@ -76,9 +83,14 @@ def connect_manual(request):
         print("Socket manual conectado: " + sid)
 
         # retorno de resposta
-        data={}
+        data["sucess"] = True
         data["id"] = sid
         return Response(data)
+    
+    else:
+        data["sucess"] = False
+        data["error"] = "A rquisição precisa ser do tipo POST para que seja aceita"
+        return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
 
 
 
