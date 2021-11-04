@@ -32,9 +32,9 @@ def process_analysis(request):
         if request.method == 'POST':
 
             # easter-egg (famoso 'ovo de páscoa' em tradução literal)
-            if request.data['url'] in ['café', 'cafe', 'cofee']:
+            if request.data['url'] in ['café', 'cafe', 'coffee']:
                 data["sucess"] = False
-                data["error"] = "Isso só pode ser piada! Erro 418 do HTTP indica que não se pode fazer café com um bule de chá."
+                data["error"] = "Isso só pode ser piada! Status 418 do HTTP indica que não se pode fazer café com um bule de chá."
                 # remover socket da lista de sockets em espera para processamento
                 remove_sockets_connected_awaiting(request.data['id'])
                 return Response(data = data, status = status.HTTP_418_IM_A_TEAPOT)
