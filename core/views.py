@@ -6,7 +6,7 @@ from core.steps import requestUrl
 from core.steps import summarizer
 from core.steps import  estructurer
 
-from socketServer.views import sockets_connected
+from socketServer.views import sockets_connected_awaiting, remove_sockets_connected_awaiting
 from socketServer.views import disconnect
 
 
@@ -29,9 +29,16 @@ def process_analysis(request):
             data = {}
 
             # verificação se id informado foi gerado pelo sistema
-            if request.data['id'] not in sockets_connected:
+            if request.data['id'] not in sockets_connected_awaiting:
                 data["error"] = "Identificação de solicitação informada não corresponde a uma identificação do sistema"
+
+                # remover socket da lista de sockets em espera para processamento
+                remove_sockets_connected_awaiting(request.data['id'])
+
                 return Response(data=data, status=status.HTTP_401_UNAUTHORIZED)
+            
+            # remover socket da lista de sockets em espera para processamento
+            remove_sockets_connected_awaiting(request.data['id'])
 
             # criação da esturutura para análise
             policy_under_analysis = AnalyticalReview()
@@ -44,20 +51,20 @@ def process_analysis(request):
             # verifica se análise foi cancelada antes da próxima etapa 
             if(get_cancel_status(request.data['id'])):
                 remove_policy_under_analysis(request.data['id'])
-                return Response("")
+                return Response("", status = 499)
 
             # etapa de extração de texto bruto do PDF ou HTML
             data['politica_generica'], text = requestUrl.text_extractor(request.data['url'], request.data['id'])
 
             # verificação se texto não é política de privacidade e retorno
-            if text == "Sistema considerou o documento como não sendo uma política de privacidade":
+            if text == "Sistema considerou o documento como não sendo uma política de privacidade" or text == "Sistema não possui suporte para o arquivo indicado na URL":
                 data["error"] = text
                 return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
             
             # verifica se análise foi cancelada antes da próxima etapa 
             if(get_cancel_status(request.data['id'])):
                 remove_policy_under_analysis(request.data['id'])
-                return Response("")
+                return Response("", status = 499)
             
             # etapa de sumarização do texto bruto
             data = summarizer.summarizer_text(text, data)
@@ -66,7 +73,7 @@ def process_analysis(request):
             # verifica se análise foi cancelada antes da próxima etapa 
             if(get_cancel_status(request.data['id'])):
                 remove_policy_under_analysis(request.data['id'])
-                return Response("")
+                return Response("", status = 499)
         
             # etapa de sinalização do texto sumarizado
             data = estructurer.sinalize(data)
