@@ -31,6 +31,14 @@ def process_analysis(request):
         # Verifica o tipo do método solicitado
         if request.method == 'POST':
 
+            # validação para url sem dado
+            if request.data['url'] in ["", "undefined", "null", None]:
+                data["sucess"] = False
+                data["error"] = "Falta do parâmetro 'url' no corpo da requisição"
+                # remover socket da lista de sockets em espera para processamento
+                remove_sockets_connected_awaiting(request.data['id'])
+                return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
+
             # easter-egg (famoso 'ovo de páscoa' em tradução literal)
             if request.data['url'] in ['café', 'cafe', 'coffee']:
                 data["sucess"] = False
