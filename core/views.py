@@ -52,9 +52,6 @@ def process_analysis(request):
                 data["sucess"] = False
                 data["error"] = "Identificação de solicitação informada não corresponde a uma identificação do sistema"
 
-                # remover socket da lista de sockets em espera para processamento
-                remove_sockets_connected_awaiting(request.data['id'])
-
                 return Response(data=data, status = status.HTTP_401_UNAUTHORIZED)
             
             # remover socket da lista de sockets em espera para processamento
