@@ -33,7 +33,7 @@ def process_analysis(request):
 
             # validação para url sem dado
             if request.data['url'] in ["", "undefined", "null", None]:
-                data["sucess"] = False
+                data["success"] = False
                 data["error"] = "Falta do parâmetro 'url' no corpo da requisição"
                 # remover socket da lista de sockets em espera para processamento
                 remove_sockets_connected_awaiting(request.data['id'])
@@ -41,7 +41,7 @@ def process_analysis(request):
 
             # easter-egg (famoso 'ovo de páscoa' em tradução literal)
             if request.data['url'] in ['café', 'cafe', 'coffee']:
-                data["sucess"] = False
+                data["success"] = False
                 data["error"] = "Isso só pode ser piada! Status 418 do HTTP indica que não se pode fazer café com um bule de chá."
                 # remover socket da lista de sockets em espera para processamento
                 remove_sockets_connected_awaiting(request.data['id'])
@@ -49,7 +49,7 @@ def process_analysis(request):
 
             # verificação se id informado foi gerado pelo sistema
             if request.data['id'] not in sockets_connected_awaiting:
-                data["sucess"] = False
+                data["success"] = False
                 data["error"] = "Identificação de solicitação informada não corresponde a uma identificação do sistema"
 
                 return Response(data=data, status = status.HTTP_401_UNAUTHORIZED)
@@ -76,7 +76,7 @@ def process_analysis(request):
             # verificação se texto não é política de privacidade e retorno
             if text == "Sistema considerou o documento como não sendo uma política de privacidade" or text == "Sistema não possui suporte para o arquivo indicado na URL":
                 new_data = {}
-                new_data["sucess"] = False
+                new_data["success"] = False
                 new_data["error"] = text
                 return Response(data = new_data, status = status.HTTP_400_BAD_REQUEST)
             
@@ -100,11 +100,11 @@ def process_analysis(request):
             remove_policy_under_analysis(request.data['id'])
             
             # retorno de resposta
-            data["sucess"] = True
+            data["success"] = True
             return Response(data, status.HTTP_200_OK)
 
         else:
-            data["sucess"] = False
+            data["success"] = False
             data["error"] = "A rquisição precisa ser do tipo POST para que seja aceita"
             return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
 
@@ -113,7 +113,7 @@ def process_analysis(request):
         message_complement = ("'id'" if ("id" not in request.data) else "") + ("'url'" if ("url" not in request.data) else "")
         message_complement = (message_complement[0: 4] + " e " + message_complement[4:]) if len(message_complement) > 6 else message_complement
 
-        data["sucess"] = False
+        data["success"] = False
         data["error"] = "Falta do parâmetro " + message_complement + " no corpo da requisição"
         return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
 
@@ -169,14 +169,14 @@ def cancel_analysis(request):
                 # caso sim, seta como cancelado na lista de políticas de privacidade em análise
                 policies_under_analysis_review[policy_index].cancel = True
 
-            data["sucess"] = True
+            data["success"] = True
             return Response(data, status.HTTP_200_OK)
         
         else:
-            data["sucess"] = False
+            data["success"] = False
             data["error"] = "A rquisição precisa ser do tipo POST para que seja aceita"
             return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
     else:
-        data["sucess"] = False
+        data["success"] = False
         data["error"] = "Falta do parâmetro 'id' no corpo da requisição"
         return Response(data = data, status = status.HTTP_400_BAD_REQUEST)       

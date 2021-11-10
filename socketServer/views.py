@@ -83,12 +83,12 @@ def connect_manual(request):
         print("Socket manual conectado: " + sid)
 
         # retorno de resposta
-        data["sucess"] = True
+        data["success"] = True
         data["id"] = sid
         return Response(data)
     
     else:
-        data["sucess"] = False
+        data["success"] = False
         data["error"] = "A rquisição precisa ser do tipo POST para que seja aceita"
         return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
 
