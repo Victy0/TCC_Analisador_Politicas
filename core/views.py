@@ -9,6 +9,7 @@ from core.steps import  estructurer
 
 from socketServer.views import sockets_connected_awaiting, remove_sockets_connected_awaiting
 from socketServer.views import disconnect
+from socketServer.views import message_event
 
 
 
@@ -61,6 +62,8 @@ def process_analysis(request):
             policy_under_analysis = AnalyticalReview()
             policy_under_analysis.id = request.data['id']
 
+            message_event(request.data["id"],"20")
+
             # incluindo a análise na lista de políticas em análise
             policies_under_analysis_review.append(policy_under_analysis)
             del policy_under_analysis
@@ -86,6 +89,7 @@ def process_analysis(request):
                 return Response("", status = 499)
             
             # etapa de sumarização do texto bruto
+            message_event(request.data["id"],"40")
             data = summarizer.summarizer_text(text, data)
             del text
 
@@ -93,14 +97,15 @@ def process_analysis(request):
             if get_cancel_status(request.data['id']):
                 remove_policy_under_analysis(request.data['id'])
                 return Response("", status = 499)
-        
+            message_event(request.data["id"],"60")
             # etapa de sinalização do texto sumarizado
             data = estructurer.sinalize(data)
-
+            message_event(request.data["id"],"80")
             remove_policy_under_analysis(request.data['id'])
             
             # retorno de resposta
             data["success"] = True
+            message_event(request.data["id"],"100")
             return Response(data, status.HTTP_200_OK)
 
         else:

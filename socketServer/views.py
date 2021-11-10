@@ -61,7 +61,8 @@ def connect(sid, environ):
     # mensagem de conexão desnecessário, pois pode recuperar do id do próprio socket
     # deixando para caso seja necessário para outro sistema intregado posteriormente
     sio.emit('connect', {'id': sid}, room = sid)
-
+  
+    sio.emit('estconnect', room = sid)
 
 
 #
