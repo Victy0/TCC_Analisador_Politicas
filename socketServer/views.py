@@ -61,7 +61,8 @@ def connect(sid, environ):
     # mensagem de conexão desnecessário, pois pode recuperar do id do próprio socket
     # deixando para caso seja necessário para outro sistema intregado posteriormente
     sio.emit('connect', {'id': sid}, room = sid)
-
+  
+    sio.emit('estconnect', room = sid)
 
 
 #
@@ -83,12 +84,12 @@ def connect_manual(request):
         print("Socket manual conectado: " + sid)
 
         # retorno de resposta
-        data["sucess"] = True
+        data["success"] = True
         data["id"] = sid
         return Response(data)
     
     else:
-        data["sucess"] = False
+        data["success"] = False
         data["error"] = "A rquisição precisa ser do tipo POST para que seja aceita"
         return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
 
