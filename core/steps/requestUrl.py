@@ -158,7 +158,9 @@ def generic_verification(policy):
         if re.findall(" " + data, policy):
             points = points + 1
     del data       
-    if points < 8 or len(policy) < 5000 :
+    print(len(policy))
+    print(points)
+    if points < 4 or len(policy) < 5000 :
         del points
         return  True
     else:
