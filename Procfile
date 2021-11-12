@@ -1,1 +1,1 @@
-web: gunicorn privacyPolicyAnalyzer.wsgi
+web: gunicorn privacyPolicyAnalyzer
