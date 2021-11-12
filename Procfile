@@ -1,1 +1,1 @@
-web: gunicorn privacyPolicyAnalyzer
+web: gunicorn privacyPolicyAnalyzer:application  
