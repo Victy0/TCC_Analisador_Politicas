@@ -1,1 +1,1 @@
-web: waitress-serve --port=8000 privacyPolicyAnalyzer.wsgi:application 
+web: gunicorn privacyPolicyAnalyzer.wsgi:application 
