@@ -1,1 +1,1 @@
-web: gunicorn -b :8000 privacyPolicyAnalyzer.wsgi:application 
+web: gunicorn -b  privacyPolicyAnalyzer.wsgi:application 
