@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'core',
     'socketServer', 
-    'corsheaders',   
+
 ]
 
 MIDDLEWARE = [
@@ -56,6 +56,8 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
      'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
+    
+
 ]
 
 CORS_ORIGIN_ALLOW_ALL_ORIGINS= True
