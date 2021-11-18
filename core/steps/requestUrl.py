@@ -52,7 +52,7 @@ def text_extractor(request, file_id):
             counter = counter + 1
         del counter
         del extracted_text
-        del table
+        
         del tables
         # remove arquivo PDF após a extração
         remove_file(complete_name)   
