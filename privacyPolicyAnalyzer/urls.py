@@ -19,5 +19,6 @@ from django.urls import path,include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('core.urls', 'core')),
-    path('socket/', include('socketServer.urls', 'socketServer')),
+    #path('socket/', include('socketServer.urls', 'socketServer')),
+    path('', include('channelServer.urls')),
 ]

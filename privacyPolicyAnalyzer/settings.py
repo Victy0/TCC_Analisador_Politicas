@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'core',
-    'socketServer',    
+    'socketServer',
+    'channels',
+    'channelServer',    
 ]
 
 MIDDLEWARE = [
@@ -76,6 +78,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'privacyPolicyAnalyzer.wsgi.application'
+ASGI_APPLICATION = 'privacyPolicyAnalyzer.asgi.application'
 
 
 # Database
