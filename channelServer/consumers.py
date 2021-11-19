@@ -20,22 +20,31 @@ sockets_connected_awaiting = []
 
 
 #
-# método para remover socket da lista de sockets que não iniciaram processamento
+# método para remover WebSocket da lista de sockets que não iniciaram processamento
 #
-def remove_sockets_connected_awaiting(sw_id):
+def remove_sockets_connected_awaiting(sw_id, delete_ws):
     # remoção do id da lista de sockets
     sockets_connected_awaiting.remove(sw_id)
     
-    #async_to_sync(channel_layer.group_discard)(sw_id)
+    if delete_ws:
+        disconnect_ws(sw_id)
 
 
 
 #
-# método para adicionar socket na lista de sockets que não iniciaram processamento
+# método para adicionar WebSocket na lista de sockets que não iniciaram processamento
 #
 def add_sockets_connected_awaiting(sw_id):
     # inclusão do id da lista de sockets
     sockets_connected_awaiting.append(sw_id)
+    
+    
+    
+#
+# método para desconectar WebSocket
+#
+def disconnect_ws(sw_id):
+    async_to_sync(channel_layer.group_discard)(sw_id, sw_id)
     
     
     
@@ -66,7 +75,6 @@ class WSConsumer(AsyncJsonWebsocketConsumer):
 
     # desconectar WebSocket
     async def disconnect(self, sw_id):
-        #await self.channel_layer.group_discard(sw_id, self.channel_name)
         print(str(sw_id) + ": WEBSOCKET DESCONECTADO")
 
     # Enviar mensagem para grupo

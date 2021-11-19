@@ -9,7 +9,7 @@ from core.steps import requestUrl
 from core.steps import summarizer
 from core.steps import  estructurer
 
-from channelServer.consumers import sockets_connected_awaiting, remove_sockets_connected_awaiting
+from channelServer.consumers import sockets_connected_awaiting, remove_sockets_connected_awaiting, disconnect_ws
 
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -47,7 +47,7 @@ def process_analysis(request):
                 data["success"] = False
                 data["error"] = "Falta do parâmetro 'url' no corpo da requisição"
                 # remover socket da lista de sockets em espera para processamento
-                remove_sockets_connected_awaiting(request.data['id'])
+                remove_sockets_connected_awaiting(request.data['id'], True)
                 return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
             validate_url = URLValidator()
 
@@ -61,7 +61,7 @@ def process_analysis(request):
                 data["success"] = False
                 data["error"] = "Isso só pode ser piada! Status 418 do HTTP indica que não se pode fazer café com um bule de chá."
                 # remover socket da lista de sockets em espera para processamento
-                remove_sockets_connected_awaiting(request.data['id'])
+                remove_sockets_connected_awaiting(request.data['id'], True)
                 return Response(data = data, status = status.HTTP_418_IM_A_TEAPOT)
 
             # verificação se id informado foi gerado pelo sistema
@@ -72,16 +72,14 @@ def process_analysis(request):
                 return Response(data=data, status = status.HTTP_401_UNAUTHORIZED)
             
             # remover socket da lista de sockets em espera para processamento
-            remove_sockets_connected_awaiting(request.data['id'])
+            remove_sockets_connected_awaiting(request.data['id'], False)
 
             # criação da esturutura para análise
             policy_under_analysis = AnalyticalReview()
             policy_under_analysis.id = request.data['id']
 
             # atualização 20%
-            print("PROCESSAMENTO 20%")
             send_ws_message_percentage(request.data["id"], "20")
-            
 
             # incluindo a análise na lista de políticas em análise
             policies_under_analysis_review.append(policy_under_analysis)
@@ -103,7 +101,7 @@ def process_analysis(request):
                 return Response(data = new_data, status = status.HTTP_400_BAD_REQUEST)
             
             #atualização 40%
-            send_ws_message_percentage(request.data["id"], "40")
+            send_ws_message_percentage(request.data["id"], "50")
             
             # verifica se análise foi cancelada antes da próxima etapa 
             if get_cancel_status(request.data['id']):
@@ -120,21 +118,18 @@ def process_analysis(request):
                 return Response("", status = 499)
             
             #atualização 70%
-            send_ws_message_percentage(request.data["id"], "70")
+            send_ws_message_percentage(request.data["id"], "80")
             
             # etapa de sinalização do texto sumarizado
             data = estructurer.sinalize(data)
             
-            # atualização 80%
-            send_ws_message_percentage(request.data["id"], "80")
+            #atualização 100%
+            send_ws_message_percentage(request.data["id"], "100")
             
             remove_policy_under_analysis(request.data['id'])
             
             # retorno de resposta
-            data["success"] = True
-            
-            #atualização 100%
-            send_ws_message_percentage(request.data["id"], "100")
+            data["success"] = True           
             
             return Response(data, status.HTTP_200_OK)
 
@@ -168,7 +163,7 @@ def remove_policy_under_analysis(review_id):
         policies_under_analysis_review.pop(policy_index)
 
         # desconectar socket
-        #remove_sockets_connected_awaiting(review_id)
+        disconnect_ws(review_id)
 
 
 
@@ -215,6 +210,8 @@ def cancel_analysis(request):
         data["success"] = False
         data["error"] = "Falta do parâmetro 'id' no corpo da requisição"
         return Response(data = data, status = status.HTTP_400_BAD_REQUEST)      
+    
+    
     
 #
 # método para enviar mensagem por WebSocket indicando a porcentagem do processamento
