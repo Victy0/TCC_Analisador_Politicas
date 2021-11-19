@@ -5,6 +5,14 @@ import string
 import time
 
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
+
+
+# recuperar camada do channel
+channel_layer = get_channel_layer()
+
 
 
 # lista de sockets que não iniciaram processamento
@@ -14,18 +22,20 @@ sockets_connected_awaiting = []
 #
 # método para remover socket da lista de sockets que não iniciaram processamento
 #
-def remove_sockets_connected_awaiting(socket_id):
+def remove_sockets_connected_awaiting(sw_id):
     # remoção do id da lista de sockets
-    sockets_connected_awaiting.remove(socket_id)
+    sockets_connected_awaiting.remove(sw_id)
+    
+    #async_to_sync(channel_layer.group_discard)(sw_id)
 
 
 
 #
 # método para adicionar socket na lista de sockets que não iniciaram processamento
 #
-def add_sockets_connected_awaiting(socket_id):
+def add_sockets_connected_awaiting(sw_id):
     # inclusão do id da lista de sockets
-    sockets_connected_awaiting.append(socket_id)
+    sockets_connected_awaiting.append(sw_id)
     
     
     
@@ -50,17 +60,19 @@ class WSConsumer(AsyncJsonWebsocketConsumer):
         
         # enviar mensagem indicando que está pronto para que seja chamada a API de processamento
         await self.send(text_data = json.dumps({
-            'message': 'Pode iniciar processamento'
+            'message': 'Pode iniciar processamento',
+            'id': sw_id
         }))
 
     # desconectar WebSocket
     async def disconnect(self, sw_id):
-        await self.channel_layer.group_discard(sw_id, self.channel_name)
-        print(sw_id + ": WEBSOCKET DESCONECTADO")
+        #await self.channel_layer.group_discard(sw_id, self.channel_name)
+        print(str(sw_id) + ": WEBSOCKET DESCONECTADO")
 
     # Enviar mensagem para grupo
-    async def send_data(self, event):
+    async def send_value_porcentage(self, event):
         # enviar mensagem para WebSocket
         await self.send(text_data=json.dumps({
-            'message': event['text']
+            'message': "Atualização do processamento",
+            'value': event['message']
         }))

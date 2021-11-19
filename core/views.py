@@ -10,8 +10,6 @@ from core.steps import summarizer
 from core.steps import  estructurer
 
 from channelServer.consumers import sockets_connected_awaiting, remove_sockets_connected_awaiting
-from socketServer.views import disconnect
-from socketServer.views import message_event
 
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -21,6 +19,9 @@ from asgiref.sync import async_to_sync
 # lista de políticas de privacidade em análise
 policies_under_analysis_review = []
 
+
+
+# recuperar camada do channel
 channel_layer = get_channel_layer()
 
 
@@ -38,6 +39,8 @@ def process_analysis(request):
     if "url" in request.data and "id" in request.data:        
         # Verifica o tipo do método solicitado
         if request.method == 'POST':
+            
+            print("INICÍO PROCESSAMENTO")
 
             # validação para url sem dado
             if request.data['url'] in ["", "undefined", "null", None]:
@@ -75,7 +78,10 @@ def process_analysis(request):
             policy_under_analysis = AnalyticalReview()
             policy_under_analysis.id = request.data['id']
 
-            message_event(request.data["id"],"20")
+            # atualização 20%
+            print("PROCESSAMENTO 20%")
+            send_ws_message_percentage(request.data["id"], "20")
+            
 
             # incluindo a análise na lista de políticas em análise
             policies_under_analysis_review.append(policy_under_analysis)
@@ -96,13 +102,15 @@ def process_analysis(request):
                 new_data["error"] = text
                 return Response(data = new_data, status = status.HTTP_400_BAD_REQUEST)
             
+            #atualização 40%
+            send_ws_message_percentage(request.data["id"], "40")
+            
             # verifica se análise foi cancelada antes da próxima etapa 
             if get_cancel_status(request.data['id']):
                 remove_policy_under_analysis(request.data['id'])
                 return Response("", status = 499)
             
             # etapa de sumarização do texto bruto
-            message_event(request.data["id"],"40")
             data = summarizer.summarizer_text(text, data)
             del text
 
@@ -110,15 +118,24 @@ def process_analysis(request):
             if get_cancel_status(request.data['id']):
                 remove_policy_under_analysis(request.data['id'])
                 return Response("", status = 499)
-            message_event(request.data["id"],"60")
+            
+            #atualização 70%
+            send_ws_message_percentage(request.data["id"], "70")
+            
             # etapa de sinalização do texto sumarizado
             data = estructurer.sinalize(data)
-            message_event(request.data["id"],"80")
+            
+            # atualização 80%
+            send_ws_message_percentage(request.data["id"], "80")
+            
             remove_policy_under_analysis(request.data['id'])
             
             # retorno de resposta
             data["success"] = True
-            message_event(request.data["id"],"100")
+            
+            #atualização 100%
+            send_ws_message_percentage(request.data["id"], "100")
+            
             return Response(data, status.HTTP_200_OK)
 
         else:
@@ -151,7 +168,7 @@ def remove_policy_under_analysis(review_id):
         policies_under_analysis_review.pop(policy_index)
 
         # desconectar socket
-        disconnect(review_id)
+        #remove_sockets_connected_awaiting(review_id)
 
 
 
@@ -199,6 +216,8 @@ def cancel_analysis(request):
         data["error"] = "Falta do parâmetro 'id' no corpo da requisição"
         return Response(data = data, status = status.HTTP_400_BAD_REQUEST)      
     
-    
-def send_ws_message(sw_id, message):
-    async_to_sync(channel_layer.group_send)(sw_id, {'type': 'send_data', 'message': message})
+#
+# método para enviar mensagem por WebSocket indicando a porcentagem do processamento
+# 
+def send_ws_message_percentage(sw_id, process_porcentage_value):
+    async_to_sync(channel_layer.group_send)(sw_id, {'type': 'send_value_porcentage', 'message': process_porcentage_value})
