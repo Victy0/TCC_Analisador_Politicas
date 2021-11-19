@@ -9,14 +9,19 @@ from core.steps import requestUrl
 from core.steps import summarizer
 from core.steps import  estructurer
 
-from socketServer.views import sockets_connected_awaiting, remove_sockets_connected_awaiting
+from channelServer.consumers import sockets_connected_awaiting, remove_sockets_connected_awaiting
 from socketServer.views import disconnect
 from socketServer.views import message_event
+
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 
 
 
 # lista de políticas de privacidade em análise
 policies_under_analysis_review = []
+
+channel_layer = get_channel_layer()
 
 
 
@@ -25,7 +30,7 @@ policies_under_analysis_review = []
 # 
 @api_view(['POST', ])
 def process_analysis(request):
-
+    
     # instância da resposta do endpoint
     data = {}
 
@@ -192,4 +197,8 @@ def cancel_analysis(request):
     else:
         data["success"] = False
         data["error"] = "Falta do parâmetro 'id' no corpo da requisição"
-        return Response(data = data, status = status.HTTP_400_BAD_REQUEST)       
+        return Response(data = data, status = status.HTTP_400_BAD_REQUEST)      
+    
+    
+def send_ws_message(sw_id, message):
+    async_to_sync(channel_layer.group_send)(sw_id, {'type': 'send_data', 'message': message})
