@@ -60,7 +60,7 @@ O projeto se econtra dividido em 5 principais diretórios:
 
 :small_blue_diamond: requirements: no qual está presente as importações requiridas do sistema e que são necessárias serem baixadas pelo 'pip'. Ressalta que dependendo da data em que se está lendo esse registro, algumas dependências podem ter sofrido atualizações.
 
-:small_blue_diamond: socketServer: no qual se econtras as configurações do servidor do socket.io utilizado para a implementação do webSocket. Juntamente com a requisição para incluir sistemas que não possuem suporte a webSocket.
+:small_blue_diamond: channelServer: no qual se econtras as configurações do servidor do channels utilizado para a implementação do WebSocket. Juntamente com a requisição de solicitação de id de um WebSocket para englobar sistemas que não possuem suporte a WebSocket.
 
     |____core
 
@@ -74,7 +74,7 @@ O projeto se econtra dividido em 5 principais diretórios:
 
     |____requirements
 
-    |____socketServer
+    |____channelServer
 
 # Repositórios relacionados
 

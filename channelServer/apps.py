@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class RandomurlConfig(AppConfig):
+class ChannelserverConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'randomurl'
+    name = 'channelServer'
