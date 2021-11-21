@@ -89,9 +89,9 @@ def summarizer_text_ranking(raw_text, is_finality):
     # string '\n' indica o fim de uma sentença
     sentences_idx = nlargest(num_sentences, ranking, key = ranking.get)
     
-    return "\n".join(
+    return "<p>" + "</p><p>".join(
         [sentence_list[j] for j in sorted(sentences_idx)]
-    )
+    ) + "</p>"
 
 
 
