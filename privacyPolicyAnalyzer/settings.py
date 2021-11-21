@@ -40,8 +40,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'core',
-    'socketServer', 
-
+    'channels',
+    'channelServer',    
 ]
 
 MIDDLEWARE = [
@@ -60,7 +60,7 @@ MIDDLEWARE = [
 
 ]
 
-CORS_ORIGIN_ALLOW_ALL_ORIGINS= True
+CORS_ORIGIN_ALLOW_ALL= True
 
 ROOT_URLCONF = 'privacyPolicyAnalyzer.urls'
 
@@ -81,6 +81,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'privacyPolicyAnalyzer.wsgi.application'
+ASGI_APPLICATION = 'privacyPolicyAnalyzer.asgi.application'
 
 
 # Database
@@ -90,6 +91,12 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+CHANNEL_LAYERS = {
+    'default': {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
     }
 }
 
@@ -136,6 +143,7 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
 import django_heroku
 django_heroku.settings(locals())
 

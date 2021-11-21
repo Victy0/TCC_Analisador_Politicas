@@ -1,7 +1,7 @@
 from django.urls import path
-from socketServer import views
+from channelServer import views
 
-app_name = 'socketServer'
+app_name = 'channelServer'
 
 urlpatterns = [
     path('manual-inclusion', views.connect_manual, name="add_socket_manual"),
