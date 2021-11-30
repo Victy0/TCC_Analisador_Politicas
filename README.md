@@ -1,6 +1,6 @@
 # ANALISADOR DE POLÍTICAS DE PRIVACIDADE
 
-Trabalho de Conclusão de Curso de graduação de Sistemas de Informação da Universidade Federal Fluminense (UFF) Repositório referente a API que processa políticas de privacidade (tanto em PDF quanto em HTML) indicando a finalidade, declarações de dados coletados e se a política analisada é genérica.
+Trabalho de Conclusão de Curso de graduação de Sistemas de Informação da Universidade Federal Fluminense (UFF). Repositório referente a API que processa políticas de privacidade (tanto em PDF quanto em HTML) indicando a finalidade, declarações de dados coletados e se a política analisada é genérica.
 
 Título: Um analisador para a avaliação de políticas de privacidade de acordo com a LGPD para proteção aos dados pessoais 
  - Versão final: fevereiro de 2022
@@ -24,7 +24,8 @@ Link para documentação da API: https://documenter.getpostman.com/view/13202167
 
 # Requisitos
 
-Python 3.9.7 ou superior
+ - Python 3.9.7 ou superior
+ - Java 8 ou superior
 
 # Instalação
 
@@ -42,7 +43,7 @@ Ativar venv:
 
 Instalar dependências:
 
-    pip install -r requirements/local.txt
+    pip install -r requirements.txt
 
 Rodar servidor na venv (porta 8000):
 

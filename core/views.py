@@ -49,13 +49,7 @@ def process_analysis(request):
                 # remover socket da lista de sockets em espera para processamento
                 remove_sockets_connected_awaiting(request.data['id'], True)
                 return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
-            validate_url = URLValidator()
-
-            try:
-                validate_url(request.data['url'])
-            except ValidationError as e :
-                data["error"] = "texto não reconhecido como uma url"
-                return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
+            
             # easter-egg (famoso 'ovo de páscoa' em tradução literal)
             if request.data['url'] in ['café', 'cafe', 'coffee']:
                 data["success"] = False
@@ -63,6 +57,15 @@ def process_analysis(request):
                 # remover socket da lista de sockets em espera para processamento
                 remove_sockets_connected_awaiting(request.data['id'], True)
                 return Response(data = data, status = status.HTTP_418_IM_A_TEAPOT)
+            
+            # verificação se é URL
+            validate_url = URLValidator()
+            try:
+                validate_url(request.data['url'])
+            except ValidationError as e :
+                data["error"] = "texto não reconhecido como uma url"
+                return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
+            
 
             # verificação se id informado foi gerado pelo sistema
             if request.data['id'] not in sockets_connected_awaiting:
