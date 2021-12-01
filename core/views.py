@@ -45,7 +45,7 @@ def process_analysis(request):
             # validação para url sem dado
             if request.data['url'] in ["", "undefined", "null", None]:
                 data["success"] = False
-                data["error"] = "Falta do parâmetro 'url' no corpo da requisição"
+                data["error"] = "Falta do parâmetro 'url' no corpo da requisição."
                 # remover socket da lista de sockets em espera para processamento
                 remove_sockets_connected_awaiting(request.data['id'], True)
                 return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
@@ -63,14 +63,14 @@ def process_analysis(request):
             try:
                 validate_url(request.data['url'])
             except ValidationError as e :
-                data["error"] = "texto não reconhecido como uma url"
+                data["error"] = "Texto não reconhecido como uma URL!"
                 return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
             
 
             # verificação se id informado foi gerado pelo sistema
             if request.data['id'] not in sockets_connected_awaiting:
                 data["success"] = False
-                data["error"] = "Identificação de solicitação informada não corresponde a uma identificação do sistema"
+                data["error"] = "Identificação de solicitação informada não corresponde a uma identificação do sistema."
 
                 return Response(data=data, status = status.HTTP_401_UNAUTHORIZED)
             
@@ -100,7 +100,7 @@ def process_analysis(request):
             if text == "Sistema considerou o documento como não sendo uma política de privacidade" or text == "Sistema não possui suporte para o arquivo indicado na URL":
                 new_data = {}
                 new_data["success"] = False
-                new_data["error"] = text
+                new_data["error"] = text + "."
                 return Response(data = new_data, status = status.HTTP_400_BAD_REQUEST)
             
             #atualização 40%
@@ -138,7 +138,7 @@ def process_analysis(request):
 
         else:
             data["success"] = False
-            data["error"] = "A rquisição precisa ser do tipo POST para que seja aceita"
+            data["error"] = "A rquisição precisa ser do tipo POST para que seja aceita."
             return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
 
     else:
@@ -147,7 +147,7 @@ def process_analysis(request):
         message_complement = (message_complement[0: 4] + " e " + message_complement[4:]) if len(message_complement) > 6 else message_complement
 
         data["success"] = False
-        data["error"] = "Falta do parâmetro " + message_complement + " no corpo da requisição"
+        data["error"] = "Falta do parâmetro " + message_complement + " no corpo da requisição."
         return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
 
 
@@ -207,11 +207,11 @@ def cancel_analysis(request):
         
         else:
             data["success"] = False
-            data["error"] = "A rquisição precisa ser do tipo POST para que seja aceita"
+            data["error"] = "A rquisição precisa ser do tipo POST para que seja aceita."
             return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
     else:
         data["success"] = False
-        data["error"] = "Falta do parâmetro 'id' no corpo da requisição"
+        data["error"] = "Falta do parâmetro 'id' no corpo da requisição."
         return Response(data = data, status = status.HTTP_400_BAD_REQUEST)      
     
     
