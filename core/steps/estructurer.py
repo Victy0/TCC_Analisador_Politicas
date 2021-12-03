@@ -16,7 +16,6 @@ def sinalize(request):
         
         compiled = re.compile(re.escape(" " + word + "."), re.IGNORECASE)
         request["coleta"] = compiled.sub(" <b class='sinalizer'>" + word + "</b>.", request["coleta"])
-
     
     request["coleta"] = request["coleta"].replace("\n","<br>") 
     
