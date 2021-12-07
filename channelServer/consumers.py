@@ -24,7 +24,8 @@ sockets_connected_awaiting = []
 #
 def remove_sockets_connected_awaiting(sw_id, delete_ws):
     # remoção do id da lista de sockets
-    sockets_connected_awaiting.remove(sw_id)
+    if(sw_id in sockets_connected_awaiting):
+        sockets_connected_awaiting.remove(sw_id)
     
     if delete_ws:
         disconnect_ws(sw_id)
