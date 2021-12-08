@@ -1,4 +1,3 @@
-import json
 import random
 import random
 import string
@@ -8,7 +7,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-from channelServer.consumers import sockets_connected_awaiting
+from channelServer.consumers import add_sockets_connected_awaiting
 
 
 
@@ -27,7 +26,13 @@ def connect_manual(request):
         sw_id = random.choice(string.ascii_letters) + str(round(time.time() * 1000)) + random.choice(string.ascii_letters)
 
         # inclusão do id na lista de sockets
-        sockets_connected_awaiting.append(sw_id)
+        insert = add_sockets_connected_awaiting(sw_id)
+        
+        if not insert:
+            data["success"] = False
+            data["id"] = "Erro ao gerar identificador"
+            return Response(data)
+                
         print(sw_id + ": SOCKET MANUAL CONECTADO")
 
         # retorno de resposta
