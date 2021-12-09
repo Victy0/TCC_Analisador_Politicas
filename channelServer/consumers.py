@@ -36,8 +36,14 @@ def remove_sockets_connected_awaiting(sw_id, delete_ws):
 # método para adicionar WebSocket na lista de sockets que não iniciaram processamento
 #
 def add_sockets_connected_awaiting(sw_id):
-    # inclusão do id da lista de sockets
-    sockets_connected_awaiting.append(sw_id)
+    try:
+        # inclusão do id da lista de sockets
+        sockets_connected_awaiting.append(sw_id)
+    except:
+        return False
+    
+    return True
+    
     
     
     
