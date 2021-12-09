@@ -37,7 +37,7 @@ def remove_sockets_connected_awaiting(sw_id, delete_ws):
 #
 def add_sockets_connected_awaiting(sw_id):
     try:
-        # inclusão do id da lista de sockets
+        # inclusão do id na lista de id de sockets
         sockets_connected_awaiting.append(sw_id)
     except:
         return False
@@ -45,7 +45,13 @@ def add_sockets_connected_awaiting(sw_id):
     return True
     
     
-    
+#
+# método para verificar se id se encontra na lista de id de sockets
+#
+def sockets_connected_awaiting_is_not_present(sw_id):
+    return sw_id not in sockets_connected_awaiting
+
+  
     
 #
 # método para desconectar WebSocket
