@@ -9,7 +9,7 @@ from core.steps import requestUrl
 from core.steps import summarizer
 from core.steps import  estructurer
 
-from channelServer.consumers import sockets_connected_awaiting, remove_sockets_connected_awaiting, disconnect_ws
+from channelServer.consumers import sockets_connected_awaiting_is_not_present, remove_sockets_connected_awaiting, disconnect_ws
 
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
@@ -68,7 +68,7 @@ def process_analysis(request):
             
 
             # verificação se id informado foi gerado pelo sistema
-            if request.data['id'] not in sockets_connected_awaiting:
+            if sockets_connected_awaiting_is_not_present(request.data['id']):
                 data["success"] = False
                 data["error"] = "Identificação de solicitação informada não corresponde a uma identificação do sistema."
 
