@@ -96,11 +96,11 @@ def process_analysis(request):
             # etapa de extração de texto bruto do PDF ou HTML
             data['politica_generica'], text = requestUrl.text_extractor(request.data['url'], request.data['id'])
 
-            # verificação se texto não é política de privacidade e retorno
-            if text == "Sistema considerou o documento como não sendo uma política de privacidade" or text == "Sistema não possui suporte para o arquivo indicado na URL":
+            # verificação se texto não é política de privacidade ou se URL informada não está funcionando
+            if text == "Sistema considerou o documento como não sendo uma política de privacidade." or text == "Conteúdo da URL fornecida não disponível online para acesso!":
                 new_data = {}
                 new_data["success"] = False
-                new_data["error"] = text + "."
+                new_data["error"] = text
                 return Response(data = new_data, status = status.HTTP_400_BAD_REQUEST)
             
             #atualização 40%

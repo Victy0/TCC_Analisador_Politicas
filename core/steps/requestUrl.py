@@ -63,7 +63,11 @@ def text_extractor(request, file_id):
 
         # instância goose e extração
         g = Goose()
-        article = g.extract(url = request)
+        try:
+            article = g.extract(url = request)
+        except Exception as e :
+            return False, "Conteúdo da URL fornecida não disponível online para acesso!"
+            
         g.close()
 
         # instância do beautifulSoup pela opção raw_html do goose
@@ -133,7 +137,7 @@ def text_extractor(request, file_id):
         is_generic = generic_verification(result_text)
         return is_generic, result_text
     else: 
-        return False, "Sistema considerou o documento como não sendo uma política de privacidade" 
+        return False, "Sistema considerou o documento como não sendo uma política de privacidade." 
 
 
 
