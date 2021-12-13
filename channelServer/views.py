@@ -34,9 +34,6 @@ def connect_manual(request):
             return Response(data)
                 
         print(sw_id + ": SOCKET MANUAL CONECTADO")
-        
-        while sockets_connected_awaiting_is_not_present(sw_id):
-            print(sw_id + ": AGUARDANDO PROCESSAMENTO DO HEROKU")
 
         # retorno de resposta
         data["success"] = True
