@@ -138,7 +138,7 @@ def process_analysis(request):
 
         else:
             data["success"] = False
-            data["error"] = "A rquisição precisa ser do tipo POST para que seja aceita."
+            data["error"] = "A requisição precisa ser do tipo POST para que seja aceita."
             return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
 
     else:
@@ -207,7 +207,7 @@ def cancel_analysis(request):
         
         else:
             data["success"] = False
-            data["error"] = "A rquisição precisa ser do tipo POST para que seja aceita."
+            data["error"] = "A requisição precisa ser do tipo POST para que seja aceita."
             return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
     else:
         data["success"] = False

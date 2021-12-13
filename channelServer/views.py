@@ -7,7 +7,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-from channelServer.consumers import add_sockets_connected_awaiting
+from channelServer.consumers import add_sockets_connected_awaiting, sockets_connected_awaiting_is_not_present
 
 
 
@@ -34,6 +34,9 @@ def connect_manual(request):
             return Response(data)
                 
         print(sw_id + ": SOCKET MANUAL CONECTADO")
+        
+        while sockets_connected_awaiting_is_not_present(sw_id):
+            print(sw_id + ": AGUARDANDO PROCESSAMENTO DO HEROKU")
 
         # retorno de resposta
         data["success"] = True
@@ -42,6 +45,6 @@ def connect_manual(request):
     
     else:
         data["success"] = False
-        data["error"] = "A rquisição precisa ser do tipo POST para que seja aceita"
+        data["error"] = "A requisição precisa ser do tipo POST para que seja aceita"
         return Response(data = data, status = status.HTTP_400_BAD_REQUEST)
 
