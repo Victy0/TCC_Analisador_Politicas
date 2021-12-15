@@ -30,8 +30,8 @@ def connect_manual(request):
         
         if not insert:
             data["success"] = False
-            data["id"] = "Erro ao gerar identificador"
-            return Response(data)
+            data["mensagem"] = "Erro ao gerar identificador"
+            return Response(data=data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
                 
         print(sw_id + ": SOCKET MANUAL CONECTADO")
 
