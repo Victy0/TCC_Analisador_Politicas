@@ -97,7 +97,7 @@ def process_analysis(request):
             data['politica_generica'], text = requestUrl.text_extractor(request.data['url'], request.data['id'])
 
             # verificação se texto não é política de privacidade ou se URL informada não está funcionando
-            if text == "Sistema considerou o documento como não sendo uma política de privacidade." or text == "Conteúdo da URL fornecida não disponível online para acesso!":
+            if text in ["Sistema considerou o documento como não sendo uma política de privacidade.", "Conteúdo da URL fornecida não disponível online para acesso!", "URL fornecida com Certificado WEB inválido para acesso pela aplicação!"]:
                 new_data = {}
                 new_data["success"] = False
                 new_data["error"] = text
