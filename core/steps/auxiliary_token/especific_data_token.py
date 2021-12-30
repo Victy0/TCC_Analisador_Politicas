@@ -1,4 +1,4 @@
-terms=[
+
    terms=[
     "cpf",
     "CPF",
