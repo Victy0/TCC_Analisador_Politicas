@@ -64,7 +64,7 @@ def text_extractor(request, file_id):
         del extension
         
         # avalia a URL para considerar se pertence a uma politica de privacidade
-        if (str(request).find('/politica-de-privacidade/') != -1 or str(request).find('/privacy-policy/') != -1) and (str(request).find('blog/politica-de-privacidade') == -1):
+        if ( avaliate_url(request)): 
             request_html_validator = True
             
         if request_html_validator:
@@ -215,3 +215,9 @@ def agroup_table(table):
     del array
    
     return ' '.join(dict.fromkeys(table_str.split())), first_text, last_text
+
+#
+# Verifica parâmetros na URL passada para identificar se é uma política de privacidade
+#
+def avaliate_url(request):
+    return str(request).find('/politica-de-privacidade/') != -1 or str(request).find('/privacy-policy/') != -1 or str(request).find('_politicadeprivacidade') or str(request).find('/PoliticaDePrivacidade') and (str(request).find('blog/politica-de-privacidade') == -1)
