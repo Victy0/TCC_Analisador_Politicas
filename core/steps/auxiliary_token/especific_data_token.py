@@ -1,10 +1,21 @@
 terms=[
+   terms=[
     "cpf",
+    "CPF",
     "email",
     "e-mail",
     "telefone",
     "senha",
     "sobrenome",
+    "dados bancários",
+    "login social",
+    "localização",
+    "sistema operacional",
+    "tipo de navegador",
+    "data de nascimento",
+    "nome de usuário",
+    "número do cartão",
+    "conta bancaria"
     "celular",
     "sexo",
     "endereço",
@@ -31,7 +42,7 @@ terms=[
     "idiomas",
     "idioma",
     "pais",
-    "profissão",
+    "profissão"
     ]
 
 especific_data= set(terms)
