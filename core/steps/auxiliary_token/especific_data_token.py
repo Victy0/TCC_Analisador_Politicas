@@ -41,7 +41,7 @@ terms=[
     "foto de perfil",
     "idiomas",
     "idioma",
-    "pais"
+    "país"
     ]
 
 especific_data= set(terms)
