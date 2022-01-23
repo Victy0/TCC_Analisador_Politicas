@@ -1,5 +1,5 @@
 
-   terms=[
+terms=[
     "cpf",
     "CPF",
     "email",
@@ -15,7 +15,7 @@
     "data de nascimento",
     "nome de usuário",
     "número do cartão",
-    "conta bancaria"
+    "conta bancária"
     "celular",
     "sexo",
     "endereço",
@@ -35,14 +35,13 @@
     "cnh",
     "remuneração",
     "título de eleitor",
-    "registro profissiohnal",
+    "registro profissional",
     "país",
     "naturalidade",
     "foto de perfil",
     "idiomas",
     "idioma",
-    "pais",
-    "profissão"
+    "pais"
     ]
 
 especific_data= set(terms)
